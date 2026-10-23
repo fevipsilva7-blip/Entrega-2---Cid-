@@ -155,9 +155,8 @@
 
 ## 2. Modelo Lógico Relacional
 
-- **Ferramenta Utilizada:** Criado no software `[PREENCHER - Ex: brModelo]`.
-- **Arquivo / Imagem do Modelo Lógico:** `[PREENCHER - Inserir link/imagem do arquivo do modelo lógico em /imagens/modelo_logico.png]`
-
+- **Ferramenta utilizada:** brModelo (modelo lógico)
+- **Arquivo do modelo lógico:** [Logic model - BRMW 02.pdf](./Logic%20model%20-%20BRMW%2002.pdf)
 ---
 
 ## 3. Script SQL Completo
@@ -178,8 +177,7 @@ O arquivo contendo a carga de dados está integrado no script principal ou dispo
 
 ## 5. Repositório GitHub e Dicionário de Dados
 
-- **Dicionário de Dados:** O documento detalhando tipos, restrições, chaves e descrições de cada coluna está disponível em:
-  👉 **[Acessar Dicionário de Dados (docs/dicionario_dados.html ou .md)](./docs/dicionario_dados.md)** `[PREENCHER - Inserir o caminho correto do arquivo HTML ou Markdown]`
+- **Dicionário de Dados:** descreve tipos, chaves e restrições (obrigatoriedade, unicidade, valores permitidos e padrão) de cada coluna: [dicionario_de_dados.html](./dicionario_de_dados.html)
 
 ---
 
