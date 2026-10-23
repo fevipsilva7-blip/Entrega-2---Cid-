@@ -8,11 +8,11 @@
 
 | Nome completo do aluno | RGM | Usuário do GitHub |
 | :--- | :--- | :--- |
-| [PREENCHER - Nome Aluno 1] | [PREENCHER - RGM] | [PREENCHER - username] |
-| [PREENCHER - Nome Aluno 2] | [PREENCHER - RGM] | [PREENCHER - username] |
-| [PREENCHER - Nome Aluno 3] | [PREENCHER - RGM] | [PREENCHER - username] |
-| [PREENCHER - Nome Aluno 4] | [PREENCHER - RGM] | [PREENCHER - username] |
-| [PREENCHER - Nome Aluno 5] | [PREENCHER - RGM] | [PREENCHER - username] |
+| Augusto de Almeida Guelere | 48832588 | guelerzao |
+| Felipe Rodrigues da Silva | 47868384 | fevipsilva7-blip |
+| Lucas Freitas de Oliveira | 048587885 | dzskl |
+| Matheus Faustino da Silva | 47854928 | Matheussil01 |
+| Otavio Estevam Ventura | 48763390 | cVenturaDev |
 
 ---
 
