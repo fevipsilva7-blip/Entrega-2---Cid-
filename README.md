@@ -157,6 +157,7 @@
 
 - **Ferramenta utilizada:** brModelo (modelo lógico)
 - **Arquivo do modelo lógico:** [Logic model - BRMW 02.pdf](./Logic%20model%20-%20BRMW%2002.pdf)
+- - **Observação sobre tipos:** o brModelo não oferece DECIMAL nem tamanho de VARCHAR. Por isso o diagrama mostra FLOAT nos campos monetários; no dicionário de dados e no script SQL esses campos são `DECIMAL(10,2)`, para evitar erros de arredondamento em valores financeiros.
 ---
 
 ## 3. Script SQL Completo
