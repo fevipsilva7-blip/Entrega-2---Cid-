@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dicionário de Dados — BRMW</title>
+  <style>
+    :root {
+      --bg: #f4f6fa;
+      --surface: #ffffff;
+      --text: #202938;
+      --muted: #657187;
+      --line: #e1e6ef;
+      --primary: #2449a5;
+      --primary-soft: #eaf0ff;
+      --pk: #147d53;
+      --pk-bg: #e4f7ed;
+      --fk: #9a5b08;
+      --fk-bg: #fff1d8;
+      --shadow: 0 8px 28px rgba(26, 42, 75, .07);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    header {
+      background: linear-gradient(135deg, #172e69, #2e56b5);
+      color: white;
+      padding: 42px 20px 36px;
+    }
+    .header-inner, main, footer { max-width: 1120px; margin: 0 auto; }
+    .eyebrow {
+      font-size: .78rem; text-transform: uppercase; letter-spacing: .13em;
+      opacity: .78; font-weight: 700;
+    }
+    h1 { margin: 8px 0 8px; font-size: clamp(1.9rem, 4vw, 2.8rem); line-height: 1.15; }
+    header p { max-width: 700px; margin: 0; color: #e1e9ff; }
+    main { padding: 28px 20px 48px; }
+    .intro {
+      background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+      padding: 20px 22px; box-shadow: var(--shadow); margin-bottom: 22px;
+    }
+    .intro h2 { margin: 0 0 8px; font-size: 1.15rem; }
+    .intro p { margin: 0; color: var(--muted); }
+    .legend { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .tag {
+      display: inline-flex; align-items: center; border-radius: 999px;
+      padding: 4px 9px; font-size: .76rem; font-weight: 700;
+    }
+    .tag.pk { background: var(--pk-bg); color: var(--pk); }
+    .tag.fk { background: var(--fk-bg); color: var(--fk); }
+    .tag.pkfk { background: var(--primary-soft); color: var(--primary); }
+    .entity {
+      background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+      margin: 18px 0; overflow: hidden; box-shadow: var(--shadow);
+    }
+    .entity-head {
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 12px; padding: 15px 19px; background: #fbfcff; border-bottom: 1px solid var(--line);
+    }
+    .entity-head h2 { font-size: 1.08rem; margin: 0; letter-spacing: .02em; }
+    .entity-head span { font-size: .8rem; color: var(--muted); }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 570px; }
+    th, td { text-align: left; padding: 11px 16px; border-bottom: 1px solid var(--line); }
+    th { font-size: .76rem; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); background: white; }
+    td { font-size: .91rem; }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:hover { background: #f9fbff; }
+    code {
+      font-family: "SFMono-Regular", Consolas, monospace; font-size: .86rem;
+      background: #f1f4f9; padding: 3px 6px; border-radius: 5px; color: #26334a;
+    }
+    .description { color: #596579; }
+    .note {
+      border-left: 4px solid #d79a2b; background: #fff9eb; color: #6b4b12;
+      border-radius: 8px; padding: 13px 16px; margin-top: 24px; font-size: .9rem;
+    }
+    footer { padding: 0 20px 28px; color: var(--muted); font-size: .82rem; }
+    @media print {
+      body { background: white; }
+      header { padding: 24px; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      main { padding: 16px 0; }
+      .entity, .intro { box-shadow: none; break-inside: avoid; }
+      footer { padding: 0; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="eyebrow">Documentação do banco de dados</div>
+      <h1>Dicionário de Dados</h1>
+      <p>Modelo lógico — BRMW</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="intro">
+      <h2>Sobre este documento</h2>
+      <p>Este dicionário descreve as entidades, os atributos e os tipos de dados identificados no diagrama fornecido. As siglas PK e FK indicam, respectivamente, chave primária e chave estrangeira. Quando um atributo aparece como PK/FK, ele exerce as duas funções.</p>
+      <div class="legend">
+        <span class="tag pk">PK · Chave primária</span>
+        <span class="tag fk">FK · Chave estrangeira</span>
+        <span class="tag pkfk">PK/FK · Chave composta ou relacionada</span>
+      </div>
+    </section>
+
+    <section class="entity">
+      <div class="entity-head"><h2>FORNECEDOR</h2><span>3 atributos</span></div>
+      <div class="table-wrap"><table><thead><tr><th>Atributo</th><th>Tipo</th><th>Chave</th><th>Descrição</th></tr></thead><tbody>
+        <tr><td><code>id_fornecedor</code></td><td>INT</td><td><span class="tag pk">PK</span></td><td class="description">Identificador único do fornecedor.</td></tr>
+        <tr><td><code>nome_empresa</code></td><td>VARCHAR</td><td>—</td><td class="description">Nome da empresa fornecedora.</td></tr>
+        <tr><td><code>contato</code></td><td>VARCHAR</td><td>—</td><td class="description">Informação de contato do fornecedor.</td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section class="entity">
+      <div class="entity-head"><h2>COMPRA</h2><span>3 atributos</span></div>
+      <div class="table-wrap"><table><thead><tr><th>Atributo</th><th>Tipo</th><th>Chave</th><th>Descrição</th></tr></thead><tbody>
+        <tr><td><code>id_compra</code></td><td>INT</td><td><span class="tag pk">PK</span></td><td class="description">Identificador único da compra.</td></tr>
+        <tr><td><code>data_compra</code></td><td>DATE</td><td>—</td><td class="description">Data em que a compra foi realizada.</td></tr>
+        <tr><td><code>id_fornecedor</code></td><td>INT</td><td><span class="tag fk">FK</span></td><td class="description">Referência ao fornecedor da compra.</td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section class="entity">
+      <div class="entity-head"><h2>ITEM_COMPRA</h2><span>4 atributos</span></div>
+      <div class="table-wrap"><table><thead><tr><th>Atributo</th><th>Tipo</th><th>Chave</th><th>Descrição</th></tr></thead><tbody>
+        <tr><td><code>id_compra</code></td><td>INT</td><td><span class="tag pkfk">PK / FK</span></td><td class="description">Identifica a compra à qual o item pertence.</td></tr>
+        <tr><td><code>id_produto</code></td><td>INT</td><td><span class="tag pkfk">PK / FK</span></td><td class="description">Identifica o produto incluído na compra.</td></tr>
+        <tr><td><code>quantidade</code></td><td>INT</td><td>—</td><td class="description">Quantidade do produto comprado.</td></tr>
+        <tr><td><code>custo_unitario</code></td><td>FLOAT</td><td>—</td><td class="description">Custo de uma unidade do produto na compra.</td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section class="entity">
+      <div class="entity-head"><h2>PRODUTO</h2><span>6 atributos</span></div>
+      <div class="table-wrap"><table><thead><tr><th>Atributo</th><th>Tipo</th><th>Chave</th><th>Descrição</th></tr></thead><tbody>
+        <tr><td><code>id_produto</code></td><td>INT</td><td><span class="tag pk">PK</span></td><td class="description">Identificador único do produto.</td></tr>
+        <tr><td><code>nome_produto</code></td><td>VARCHAR</td><td>—</td><td class="description">Nome do produto.</td></tr>
+        <tr><td><code>descricao</code></td><td>VARCHAR</td><td>—</td><td class="description">Descrição do produto.</td></tr>
+        <tr><td><code>preco</code></td><td>FLOAT</td><td>—</td><td class="description">Preço de venda do produto.</td></tr>
+        <tr><td><code>quantidade_estoque</code></td><td>INT</td><td>—</td><td class="description">Quantidade disponível em estoque.</td></tr>
+        <tr><td><code>id_categoria</code></td><td>INT</td><td><span class="tag fk">FK</span></td><td class="description">Referência à categoria do produto.</td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section class="entity">
+      <div class="entity-head"><h2>CATEGORIA</h2><span>2 atributos</span></div>
+      <div class="table-wrap"><table><thead><tr><th>Atributo</th><th>Tipo</th><th>Chave</th><th>Descrição</th></tr></thead><tbody>
+        <tr><td><code>id_categoria</code></td><td>INT</td><td><span class="tag pk">PK</span></td><td class="description">Identificador único da categoria.</td></tr>
+        <tr><td><code>nome_categoria</code></td><td>VARCHAR</td><td>—</td><td class="description">Nome da categoria.</td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section class="entity">
+      <div class="entity-head"><h2>ITEM_PEDIDO</h2><span>4 atributos</span></div>
+      <div class="table-wrap"><table><thead><tr><th>Atributo</th><th>Tipo</th><th>Chave</th><th>Descrição</th></tr></thead><tbody>
+        <tr><td><code>id_pedido</code></td><td>INT</td><td><span class="tag pkfk">PK / FK</span></td><td class="description">Referência ao pedido que contém o item.</td></tr>
+        <tr><td><code>id_produto</code></td><td>INT</td><td><span class="tag pkfk">PK / FK</span></td><td class="description">Referência ao produto do item.</td></tr>
+        <tr><td><code>quantidade</code></td><td>INT</td><td>—</td><td class="description">Quantidade do produto no pedido.</td></tr>
+        <tr><td><code>preco_unitario</code></td><td>FLOAT</td><td>—</td><td class="description">Preço de uma unidade do produto no pedido.</td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section class="entity">
+      <div class="entity-head"><h2>CLIENTE</h2><span>4 atributos</span></div>
+      <div class="table-wrap"><table><thead><tr><th>Atributo</th><th>Tipo</th><th>Chave</th><th>Descrição</th></tr></thead><tbody>
+        <tr><td><code>id_cliente</code></td><td>INT</td><td><span class="tag pk">PK</span></td><td class="description">Identificador único do cliente.</td></tr>
+        <tr><td><code>nome</code></td><td>VARCHAR</td><td>—</td><td class="description">Nome do cliente.</td></tr>
+        <tr><td><code>telefone</code></td><td>VARCHAR</td><td>—</td><td class="description">Telefone principal do cliente.</td></tr>
+        <tr><td><code>telefone_2</code></td><td>VARCHAR</td><td>—</td><td class="description">Telefone alternativo do cliente.</td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section class="entity">
+      <div class="entity-head"><h2>PEDIDO</h2><span>7 atributos</span></div>
+      <div class="table-wrap"><table><thead><tr><th>Atributo</th><th>Tipo</th><th>Chave</th><th>Descrição</th></tr></thead><tbody>
+        <tr><td><code>id_pedido</code></td><td>INT</td><td><span class="tag pk">PK</span></td><td class="description">Identificador único do pedido.</td></tr>
+        <tr><td><code>data_hora</code></td><td>DATETIME</td><td>—</td><td class="description">Data e hora do pedido.</td></tr>
+        <tr><td><code>canal_atendimento</code></td><td>VARCHAR</td><td>—</td><td class="description">Canal pelo qual o pedido foi recebido.</td></tr>
+        <tr><td><code>status</code></td><td>VARCHAR</td><td>—</td><td class="description">Situação atual do pedido.</td></tr>
+        <tr><td><code>observacao</code></td><td>VARCHAR</td><td>—</td><td class="description">Observações relacionadas ao pedido.</td></tr>
+        <tr><td><code>id_cliente</code></td><td>INT</td><td><span class="tag fk">FK</span></td><td class="description">Referência ao cliente que realizou o pedido.</td></tr>
+        <tr><td><code>id_funcionario</code></td><td>INT</td><td><span class="tag fk">FK</span></td><td class="description">Referência ao funcionário associado ao pedido.</td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section class="entity">
+      <div class="entity-head"><h2>FUNCIONARIO</h2><span>4 atributos</span></div>
+      <div class="table-wrap"><table><thead><tr><th>Atributo</th><th>Tipo</th><th>Chave</th><th>Descrição</th></tr></thead><tbody>
+        <tr><td><code>id_funcionario</code></td><td>INT</td><td><span class="tag pk">PK</span></td><td class="description">Identificador único do funcionário.</td></tr>
+        <tr><td><code>nome</code></td><td>VARCHAR</td><td>—</td><td class="description">Nome do funcionário.</td></tr>
+        <tr><td><code>cargo</code></td><td>VARCHAR</td><td>—</td><td class="description">Cargo exercido pelo funcionário.</td></tr>
+        <tr><td><code>nivel_acesso</code></td><td>VARCHAR</td><td>—</td><td class="description">Nível de acesso do funcionário ao sistema.</td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section class="entity">
+      <div class="entity-head"><h2>ENDEREÇO</h2><span>7 atributos</span></div>
+      <div class="table-wrap"><table><thead><tr><th>Atributo</th><th>Tipo</th><th>Chave</th><th>Descrição</th></tr></thead><tbody>
+        <tr><td><code>id_endereco</code></td><td>INT</td><td><span class="tag pk">PK</span></td><td class="description">Identificador único do endereço.</td></tr>
+        <tr><td><code>rua</code></td><td>VARCHAR</td><td>—</td><td class="description">Nome da rua ou logradouro.</td></tr>
+        <tr><td><code>numero</code></td><td>VARCHAR</td><td>—</td><td class="description">Número do endereço.</td></tr>
+        <tr><td><code>bairro</code></td><td>VARCHAR</td><td>—</td><td class="description">Bairro do endereço.</td></tr>
+        <tr><td><code>cep</code></td><td>CHAR</td><td>—</td><td class="description">Código de Endereçamento Postal.</td></tr>
+        <tr><td><code>complemento</code></td><td>VARCHAR</td><td>—</td><td class="description">Complemento do endereço, quando houver.</td></tr>
+        <tr><td><code>id_cliente</code></td><td>INT</td><td><span class="tag fk">FK</span></td><td class="description">Referência ao cliente associado ao endereço.</td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section class="entity">
+      <div class="entity-head"><h2>PAGAMENTO</h2><span>6 atributos</span></div>
+      <div class="table-wrap"><table><thead><tr><th>Atributo</th><th>Tipo</th><th>Chave</th><th>Descrição</th></tr></thead><tbody>
+        <tr><td><code>id_pagamento</code></td><td>INT</td><td><span class="tag pk">PK</span></td><td class="description">Identificador único do pagamento.</td></tr>
+        <tr><td><code>forma_pagamento</code></td><td>VARCHAR</td><td>—</td><td class="description">Forma utilizada para realizar o pagamento.</td></tr>
+        <tr><td><code>valor</code></td><td>FLOAT</td><td>—</td><td class="description">Valor do pagamento.</td></tr>
+        <tr><td><code>status_pagamento</code></td><td>VARCHAR</td><td>—</td><td class="description">Situação do pagamento.</td></tr>
+        <tr><td><code>data_hora</code></td><td>DATETIME</td><td>—</td><td class="description">Data e hora do pagamento.</td></tr>
+        <tr><td><code>id_pedido</code></td><td>INT</td><td><span class="tag fk">FK</span></td><td class="description">Referência ao pedido relacionado ao pagamento.</td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section class="entity">
+      <div class="entity-head"><h2>ENTREGA</h2><span>3 atributos</span></div>
+      <div class="table-wrap"><table><thead><tr><th>Atributo</th><th>Tipo</th><th>Chave</th><th>Descrição</th></tr></thead><tbody>
+        <tr><td><code>id_entrega</code></td><td>INT</td><td><span class="tag pk">PK</span></td><td class="description">Identificador único da entrega.</td></tr>
+        <tr><td><code>status_entrega</code></td><td>VARCHAR</td><td>—</td><td class="description">Situação atual da entrega.</td></tr>
+        <tr><td><code>id_pedido</code></td><td>INT</td><td><span class="tag fk">FK</span></td><td class="description">Referência ao pedido que será entregue.</td></tr>
+        <tr><td><code>id_endereco</code></td><td>INT</td><td><span class="tag fk">FK</span></td><td class="description">Referência ao endereço de entrega.</td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section class="entity">
+      <div class="entity-head"><h2>DESPESA</h2><span>6 atributos</span></div>
+      <div class="table-wrap"><table><thead><tr><th>Atributo</th><th>Tipo</th><th>Chave</th><th>Descrição</th></tr></thead><tbody>
+        <tr><td><code>id_despesa</code></td><td>INT</td><td><span class="tag pk">PK</span></td><td class="description">Identificador único da despesa.</td></tr>
+        <tr><td><code>descricao</code></td><td>VARCHAR</td><td>—</td><td class="description">Descrição da despesa.</td></tr>
+        <tr><td><code>categoria</code></td><td>VARCHAR</td><td>—</td><td class="description">Categoria da despesa.</td></tr>
+        <tr><td><code>data_despesa</code></td><td>DATE</td><td>—</td><td class="description">Data em que a despesa ocorreu.</td></tr>
+        <tr><td><code>valor</code></td><td>FLOAT</td><td>—</td><td class="description">Valor da despesa.</td></tr>
+        <tr><td><code>id_funcionario</code></td><td>INT</td><td><span class="tag fk">FK</span></td><td class="description">Referência ao funcionário associado à despesa.</td></tr>
+      </tbody></table></div>
+    </section>
+
+  </main>
+</body>
+</html>
