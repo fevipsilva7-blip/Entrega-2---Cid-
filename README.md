@@ -20,7 +20,7 @@
 
 ### 1.1 Revisão do Modelo Conceitual
 
-#### Caracterização da Organização
+#### cccccaracterização da Organização
 - **Nome e natureza da organização:** Donna Claudia Restaurante e Lanchonete (CNPJ: 36.276.829/0001-69). Trata-se de uma empresa privada comercial com fins lucrativos do ramo alimentício.
 - **Contexto e porte:** O restaurante está em operação há aproximadamente 2 anos e conta atualmente com 5 funcionários. Atende um volume médio de cerca de 3.000 clientes por mês (aproximadamente 750 pedidos/atendimentos por semana), operando com vendas presenciais, lanches, refeições e forte fluxo via WhatsApp e aplicativos de delivery.
 - **Problemas e necessidades identificados:**
