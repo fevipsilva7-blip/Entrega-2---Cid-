@@ -31,15 +31,15 @@
 - **Justificativa da escolha:** Organização real de pequeno porte com operação intensa e processos de negócio bem delimitados. Apresenta desafios reais de gestão de dados adequados para o desenvolvimento da modelagem relacional.
 - **Evidências da organização:** 
   - **Endereço:** Rua Maciel Monteiro, nº 264.
-  - **Perfil Google Meu Negócio / Comprovante:** `[PREENCHER - Inserir Link do Google Business Profile ou Endereço Completo]`
-  - **Fotos do Local:** `[PREENCHER - Adicionar imagem PNG/JPG no repositório, ex: /imagens/fachada.jpg e referenciar aqui]`
-- **Responsável pela organização:** Proprietária e Administradora. `[PREENCHER - Inserir Nome Completo da Proprietária e Telefone de Contato]`.
+  - **Perfil Google Meu Negócio / Comprovante:** Rua Maciel monteiro 264 Gopouva
+  - **Fotos do Local:** imagem.faixada.png
+- **Responsável pela organização:** Proprietária e Administradora. Antonia Claudia Freitas da Silva Oliveira - 11996225862.
 
 #### Relato da Entrevista
 - **Quem:** Entrevistas realizadas com a proprietária/gerente do estabelecimento.
 - **Quando e onde:** Entrevistas presencialmente no ambiente do restaurante.
 - **Achados da Observação Presencial:** Observou-se a dinâmica de recepção de mensagens via WhatsApp, a impressão/anotação manual de pedidos para a cozinha, a conferência diária do estoque pelo gerente e o fechamento do caixa ao final do expediente.
-- **Comprovação:** `[PREENCHER - Adicionar a foto da entrevista no local no repositório, ex: /imagens/entrevista.jpg]`
+- **Comprovação:** imagem.entrevista.png
 - **O que foi levantado:** O detalhamento completo da rotina operacional, regras de exceção e requisitos foi consolidado no documento dedicado no repositório: [Acessar Levantamento Completo (levantamento/levantamento.md)](./levantamento/levantamento.md).
 
 #### Resumo do Levantamento
@@ -73,7 +73,7 @@
 - `RN05`: Cada pedido possui uma numeração única gerada sequencialmente pelo sistema.
 
 #### Notação do DER Conceitual
-- **Ferramenta Utilizada:** Criado no software `[PREENCHER - Ex: brModelo / Lucidchart / Draw.io]`.
+- **Ferramenta Utilizada:** Criado no software BRMODELO.
 - **Link/Imagem do DER:** `[PREENCHER - Adicionar a imagem do DER no repositório em /imagens/der_conceitual.png]`
 
 #### Ajustes do Modelo em Relação à Entrega 1
