@@ -66,7 +66,7 @@
   - `RNF03`: O acesso às informações financeiras e aos relatórios estratégicos deve ser restrito por permissões por perfil (proprietária/gerente).
 
 ##### Regras de Negócio
-- `RN01`: Todo pedido de delivery precisa obrigatoriamente estar vinculado a um cliente cadastrado com telefone e endereço válidos.
+- `RN01`: Todo pedido de delivery precisa obrigatoriamente estar vinculado a um cliente cadastrado com telefone e endereço válidos;
 - `RN02`: Um item só pode ser adicionado ao pedido se houver quantidade disponível suficiente em estoque.
 - `RN03`: Em caso de cancelamento do pedido, o registro do pedido não é excluído do banco; altera-se seu status para "Cancelado" mantendo o motivo e o histórico financeiro associado.
 - `RN04`: A alteração do preço de um produto no cadastro não pode alterar o valor unitário já registrado nos pedidos passados.
