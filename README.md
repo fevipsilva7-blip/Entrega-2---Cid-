@@ -84,8 +84,8 @@
 
 
 #### Notação do DER Conceitual
-- **Ferramenta Utilizada:** Criado no software BRMODELO.
-- **Link/Imagem do DER:** `[PREENCHER - Adicionar a imagem do DER no repositório em /imagens/der_conceitual.png]`
+- **Ferramenta utilizada:** brModelo.
+- **Link/Imagem do DER:** ![DER Conceitual](./der_conceitual.png)
 
 #### Ajustes do Modelo em Relação à Entrega 1
 
@@ -166,9 +166,10 @@
 
 ## 2. Modelo Lógico Relacional
 
-- **Ferramenta utilizada:** brModelo (modelo lógico)
-- **Arquivo do modelo lógico:** [Logic model - BRMW 02.pdf](./Logic%20model%20-%20BRMW%2002.pdf)
-- - **Observação sobre tipos:** o brModelo não oferece DECIMAL nem tamanho de VARCHAR. Por isso o diagrama mostra FLOAT nos campos monetários; no dicionário de dados e no script SQL esses campos são `DECIMAL(10,2)`, para evitar erros de arredondamento em valores financeiros.
+- **Ferramenta utilizada:** brModelo (modelo lógico).
+- **Imagem do modelo lógico:** ![DER Lógico](./der_logico.png)
+- **Observação sobre tipos:** O brModelo não oferece os tipos `DECIMAL` nem tamanhos para `VARCHAR`. Por isso, o diagrama pode apresentar `FLOAT` nos campos monetários; no dicionário de dados e no script SQL, os campos financeiros devem utilizar `DECIMAL(10,2)`.
+
 ---
 
 ## 3. Script SQL Completo
