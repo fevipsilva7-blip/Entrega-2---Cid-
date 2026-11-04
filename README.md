@@ -188,8 +188,9 @@ O arquivo contendo a carga de dados está integrado no script principal ou dispo
 ---
 
 ## 5. Repositório GitHub e Dicionário de Dados
+- **Dicionário de Dados:** descreve os campos, tipos, chaves, obrigatoriedade, unicidade, valores permitidos e padrões de cada tabela: [dicionario_de_dados.html](./dicionario_de_dados.html).
 
-- **Dicionário de Dados:** descreve tipos, chaves e restrições (obrigatoriedade, unicidade, valores permitidos e padrão) de cada coluna: [dicionario_de_dados.html](./dicionario_de_dados.html)
+
 
 ---
 
