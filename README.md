@@ -44,7 +44,7 @@
 - **Objetivo:** Levantar informações sobre os processos administrativos e operacionais, identificar necessidades e coletar requisitos para a modelagem do banco de dados.
 - **Principais assuntos abordados:** Gestão de pedidos, delivery, cadastro de clientes, controle de estoque, compras, pagamentos, cancelamentos, reembolsos e despesas.
 - **Comprovação:** `imagem.entrevista.png`.
-- **Levantamento completo:** O detalhamento das respostas, processos, requisitos e regras de negócio está disponível no documento [Levantamento Completo](./levantamento/levantamento.md).
+- **Levantamento completo:** O detalhamento das respostas, processos, requisitos e regras de negócio está disponível no documento.[Acessar Levantamento Completo](./levantamento/levantamento.md)
 
 
 #### Resumo do Levantamento
