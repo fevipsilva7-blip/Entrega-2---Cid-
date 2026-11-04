@@ -37,7 +37,7 @@
 - **Responsável pela organização:** Antonia Claudia Freitas da Silva Oliveira, proprietária e administradora. A entrevistada autorizou a utilização de seu nome completo neste trabalho.
 #### Relato das Entrevistas
 - **Quem:** Antonia Claudia Freitas da Silva Oliveira, proprietária do estabelecimento.
-- **Quando:** 20/10/2026. **
+- **Quando:** 20/10/2026. 
 - **Onde:** Presencialmente, no ambiente do restaurante.
 - **Participante do grupo:** Lucas Freitas de Oliveira foi o único integrante que participou das duas entrevistas.
 - **Autorização:** A entrevistada autorizou a utilização de seu nome completo no trabalho.
