@@ -189,7 +189,7 @@ O arquivo contendo a carga de dados está integrado no script principal ou dispo
 ---
 
 ## 5. Repositório GitHub e Dicionário de Dados
-- **Dicionário de Dados:** descreve os tipos, chaves e restrições de cada coluna: [Acessar Dicionário de Dados](./Dicionario%20de%20dados/dicionario_de_dados%20.html)
+- **Dicionário de Dados:** [Acessar pasta do Dicionário de Dados](./Dicionario%20de%20dados/)
 
 ---
 
