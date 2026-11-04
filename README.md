@@ -21,35 +21,42 @@
 ### 1.1 Revisão do Modelo Conceitual
 
 #### Caracterização da Organização
-- **Nome e natureza da organização:** Donna Claudia Restaurante e Lanchonete (CNPJ: 36.276.829/0001-69). Trata-se de uma empresa privada comercial com fins lucrativos do ramo alimentício.
-- **Contexto e porte:** O restaurante está em operação há aproximadamente 2 anos e conta atualmente com 5 funcionários. Atende um volume médio de cerca de 3.000 clientes por mês (aproximadamente 750 pedidos/atendimentos por semana), operando com vendas presenciais, lanches, refeições e forte fluxo via WhatsApp e aplicativos de delivery.
+- Nome e natureza da organização: Donna Claudia Restaurante e Lanchonete (CNPJ: 36.276.829/0001-69). Trata-se de uma empresa privada comercial com fins lucrativos do ramo alimentício.
+- Contexto e porte: O restaurante está em operação há aproximadamente 2 anos e conta atualmente com 5 funcionários. Atende um volume médio de cerca de 3.000 clientes por mês (aproximadamente 750 pedidos/atendimentos por semana), operando com vendas presenciais, lanches, refeições e forte fluxo via WhatsApp e aplicativos de delivery.
 - **Problemas e necessidades identificados:**
-  - `P1`: **Desorganização e falhas na operação do Delivery:** Dificuldade no acompanhamento dos pedidos em tempo real, integrando o recebimento de canais externos (WhatsApp/Apps), status de preparo na cozinha e despacho/entrega.
-  - `P2`: **Falta de controle estruturado para Exceções (Cancelamentos/Reembolsos):** Ausência de histórico unificado quando ocorrem problemas na entrega (itens faltantes, divergências de pedido), gerando retrabalho manual e inconsistências na conferência financeira final.
-  - `P3`: **Descentralização dos Dados Financeiros e Canais de Venda:** Dificuldade em comparar diretamente o volume e faturamento entre o WhatsApp e os aplicativos de delivery, além de consolidar despesas operacionais com o faturamento em um só local.
+  - `P1`: **Acompanhamento na operação do Delivery:** Dificuldade no acompanhamento dos pedidos em tempo real, integrando o recebimento de canais externos (WhatsApp/Apps), status de preparo na cozinha e despacho/entrega.
+  - `P2`: **Controle  para Exceções (Cancelamentos/Reembolsos):** Ausência de histórico unificado quando ocorrem problemas na entrega (itens faltantes, divergências de pedido), gerando retrabalho manual e inconsistências na conferência financeira final.
+  - `P3`: **Consolidação dos dados financeiros e dos canais de venda:** necessidade de consultar e comparar as vendas por canal (WhatsApp e aplicativos de delivery) e reunir informações sobre vendas e despesas.
+
 - **Escopo do sistema:** O banco de dados reúne as informações globais da organização, englobando clientes, produtos, categorias de itens, fornecedores, compras de estoque, despesas, funcionários, pedidos, itens do pedido, status de entrega e registros de pagamento/reembolso.
 - **Justificativa da escolha:** Organização real de pequeno porte com operação intensa e processos de negócio bem delimitados. Apresenta desafios reais de gestão de dados adequados para o desenvolvimento da modelagem relacional.
 - **Evidências da organização:** 
   - **Endereço:** Rua Maciel Monteiro, nº 264.
   - **Perfil Google Meu Negócio / Comprovante:** Rua Maciel monteiro 264 Gopouva
   - **Fotos do Local:** imagem.faixada.png
-- **Responsável pela organização:** Proprietária e Administradora. Antonia Claudia Freitas da Silva Oliveira - 11996225862.
+- **Responsável pela organização:** Antonia Claudia Freitas da Silva Oliveira, proprietária e administradora. A entrevistada autorizou a utilização de seu nome completo neste trabalho.
+#### Relato das Entrevistas
+- **Quem:** Antonia Claudia Freitas da Silva Oliveira, proprietária do estabelecimento.
+- **Quando:** 20/10/2026. **
+- **Onde:** Presencialmente, no ambiente do restaurante.
+- **Participante do grupo:** Lucas Freitas de Oliveira foi o único integrante que participou das duas entrevistas.
+- **Autorização:** A entrevistada autorizou a utilização de seu nome completo no trabalho.
+- **Objetivo:** Levantar informações sobre os processos administrativos e operacionais, identificar necessidades e coletar requisitos para a modelagem do banco de dados.
+- **Principais assuntos abordados:** Gestão de pedidos, delivery, cadastro de clientes, controle de estoque, compras, pagamentos, cancelamentos, reembolsos e despesas.
+- **Comprovação:** `imagem.entrevista.png`.
+- **Levantamento completo:** O detalhamento das respostas, processos, requisitos e regras de negócio está disponível no documento [Levantamento Completo](./levantamento/levantamento.md).
 
-#### Relato da Entrevista
-- **Quem:** Entrevistas realizadas com a proprietária/gerente do estabelecimento.
-- **Quando e onde:** Entrevistas presencialmente no ambiente do restaurante.
-- **Achados da Observação Presencial:** Observou-se a dinâmica de recepção de mensagens via WhatsApp, a impressão/anotação manual de pedidos para a cozinha, a conferência diária do estoque pelo gerente e o fechamento do caixa ao final do expediente.
-- **Comprovação:** imagem.entrevista.png
-- **O que foi levantado:** O detalhamento completo da rotina operacional, regras de exceção e requisitos foi consolidado no documento dedicado no repositório: [Acessar Levantamento Completo (levantamento/levantamento.md)](./levantamento/levantamento.md).
 
 #### Resumo do Levantamento
 
 ##### Processos de Negócio Mapeados
-1. **Cadastro e Gestão de Clientes:** Identificação obrigatória para entregas de delivery (nome, telefone, endereço) e opcional para atendimentos presenciais.
-2. **Emissão e Acompanhamento de Pedidos:** Registro da origem (WhatsApp ou App), composição dos itens, status de preparo e atribuição de entregas.
-3. **Controle de Estoque e Compras:** Atualização diária dos insumos/produtos e registro de aquisições junto a fornecedores ou mercados.
-4. **Gestão de Pagamentos e Reembolsos:** Liquidação das vendas por múltiplos meios (Pix, Cartão, Dinheiro) e controle de estornos decorrentes de cancelamentos.
-5. **Gestão Financeira e Despesas:** Lançamento de custos operacionais e fechamento de caixa diário/mensal.
+1. **Cadastro e gestão de clientes:** Para pedidos de delivery são coletados nome, telefone e endereço. O levantamento também indica que os dados de clientes são necessários para a entrega.
+2. **Emissão e acompanhamento de pedidos:** Registro da origem do pedido (como WhatsApp ou aplicativo), dos produtos, valores, data e situação do pedido.
+3. **Controle de estoque e compras:** Acompanhamento do estoque, com verificação diária e alertas do sistema Bion Finance quando um produto está próximo de acabar; compras realizadas com fornecedores e mercados.
+4. **Gestão de pagamentos e reembolsos:** Recebimento por Pix, cartão e dinheiro; em situações de problemas ou cancelamentos, pode ocorrer reembolso ou preparação de um novo pedido.
+5. **Gestão financeira e despesas:** Registro e consulta de vendas e despesas, com necessidade de relatórios para acompanhamento financeiro.
+
+
 
 ##### Requisitos do Sistema
 - **Requisitos Funcionais:**
