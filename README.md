@@ -171,7 +171,8 @@
 ## 3. Script SQL Completo
 
 O script SQL completo para criação do banco de dados MySQL, inserção de tabelas, restrições e consultas está localizado em:
-👉 **[Acessar Script SQL Completo (docs/script.sql)](./docs/script.sql)**
+[Acessar Script SQL](./docs/script.sql)
+
 
 ---
 
@@ -179,8 +180,8 @@ O script SQL completo para criação do banco de dados MySQL, inserção de tabe
 
 A massa de dados foi elaborada de forma fictícia e coerente com a escala da organização (simulando proporções reais de seus 3.000 atendimentos mensais) para testar o comportamento do sistema sob cenários operacionais variados.
 
-O arquivo contendo a carga de dados está integrado no script principal ou disponível separadamente em:
-👉 **[Acessar Massa de Dados SQL (docs/massa_de_dados.sql)](./docs/massa_de_dados.sql)** `[PREENCHER OU ATUALIZAR CONFORME A ESTRUTURA DO SEU REPOSITÓRIO]`
+O arquivo contendo a carga de dados está integrado no script principal ou disponível separadamente em:[Acessar Massa de Dados](./docs/massa_de_dados.sql)
+
 
 ---
 
@@ -205,6 +206,5 @@ O arquivo contendo a carga de dados está integrado no script principal ou dispo
 ---
 
 ## 7. Apresentação Corporativa Final
+[Acessar Slides](./docs/apresentacao.pdf)
 
-- **Estrutura dos Slides:** Os slides para a apresentação corporativa de 8 minutos estão disponíveis na pasta `/docs` do repositório:
-  👉 **[Acessar Slides da Apresentação (docs/apresentacao.pdf)](./docs/apresentacao.pdf)** `[PREENCHER - Inserir o link correto dos seus slides]`
