@@ -57,27 +57,31 @@
 5. **Gestão financeira e despesas:** Registro e consulta de vendas e despesas, com necessidade de relatórios para acompanhamento financeiro.
 
 
-
 ##### Requisitos do Sistema
-- **Requisitos Funcionais:**
-  - `RF01`: O sistema deve permitir cadastrar clientes informando nome completo, telefone e endereço (logradouro, número, bairro, CEP).
-  - `RF02`: O sistema deve registrar produtos com código, nome, categoria, preço unitário e quantidade atual em estoque.
-  - `RF03`: O sistema deve registrar pedidos contendo número único, data/hora, cliente, origem/canal, valor total e status do pedido.
-  - `RF04`: O sistema deve associar itens ao pedido, indicando o produto, a quantidade solicitada e o preço praticado.
-  - `RF05`: O sistema deve registrar pagamentos vinculados ao pedido, especificando forma de pagamento e status (pendente, pago, reembolsado).
-  - `RF06`: O sistema deve emitir alertas automáticos quando a quantidade de um produto atingir o limite mínimo de estoque.
-  - `RF07`: O sistema deve registrar justificativas e históricos em pedidos cancelados ou reembolsados.
-- **Requisitos Não Funcionais:**
-  - `RNF01`: O sistema deve possuir interface adaptável para execução em computador desktop e dispositivos móveis.
-  - `RNF02`: O sistema deve ser de simples usabilidade, voltado para operadores com perfil leigo em tecnologia.
-  - `RNF03`: O acesso às informações financeiras e aos relatórios estratégicos deve ser restrito por permissões por perfil (proprietária/gerente).
+
+**Requisitos Funcionais:**
+- `RF01`: O sistema deve permitir registrar os dados de clientes necessários para a entrega, incluindo nome, telefone e endereço.
+- `RF02`: O sistema deve registrar produtos com identificação, nome, preço e quantidade em estoque.
+- `RF03`: O sistema deve registrar pedidos contendo número único, data, produtos, valor total, forma de pagamento e canal de origem.
+- `RF04`: O sistema deve associar itens ao pedido, indicando o produto, a quantidade solicitada e o preço praticado.
+- `RF05`: O sistema deve registrar pagamentos vinculados aos pedidos, especificando a forma de pagamento e a situação do pagamento.
+- `RF06`: O sistema deve permitir acompanhar o estoque e identificar produtos próximos de acabar.
+- `RF07`: O sistema deve registrar cancelamentos, seus motivos e as informações de pagamento ou reembolso relacionadas.
+- `RF08`: O sistema deve permitir consultar informações gerenciais, como vendas mensais, despesas, produtos mais vendidos, pagamentos pendentes, cancelamentos e vendas por canal.
+
+**Requisitos Não Funcionais:**
+- `RNF01`: O sistema deve permitir acesso por computador e dispositivo móvel, com conexão à internet.
+- `RNF02`: O sistema deve possuir interface simples, adequada a usuários com diferentes níveis de familiaridade com tecnologia.
+- `RNF03`: O acesso às informações financeiras deve ser controlado conforme as permissões dos usuários.
+- `RNF04`: O sistema deve permitir que informações registradas manualmente durante uma indisponibilidade sejam atualizadas posteriormente.
 
 ##### Regras de Negócio
-- `RN01`: Todo pedido de delivery precisa obrigatoriamente estar vinculado a um cliente cadastrado com telefone e endereço válidos;
-- `RN02`: Um item só pode ser adicionado ao pedido se houver quantidade disponível suficiente em estoque.
-- `RN03`: Em caso de cancelamento do pedido, o registro do pedido não é excluído do banco; altera-se seu status para "Cancelado" mantendo o motivo e o histórico financeiro associado.
-- `RN04`: A alteração do preço de um produto no cadastro não pode alterar o valor unitário já registrado nos pedidos passados.
-- `RN05`: Cada pedido possui uma numeração única gerada sequencialmente pelo sistema.
+- `RN01`: Para pedidos que exigem entrega, devem ser registrados os dados necessários para localizar e contatar o cliente, incluindo nome, telefone e endereço.
+- `RN02`: **[VALIDAR COM O GRUPO/ENTREVISTADA]** Confirmar se o sistema deverá impedir a inclusão de produtos em pedidos quando não houver estoque suficiente. O levantamento confirma o acompanhamento do estoque, mas não confirma essa restrição de venda.
+- `RN03`: Quando um pedido for cancelado, seu registro e as informações relevantes — como número, data, valor, produtos, motivo e registro de pagamento/reembolso — devem ser preservados para consulta histórica.
+- `RN04`: O preço registrado no item do pedido deve preservar o valor praticado no momento da venda, sem ser alterado por futuras mudanças no cadastro do produto.
+- `RN05`: Cada pedido deve possuir um identificador único. **[VALIDAR]** Confirmar se a numeração deve ser sequencial e gerada automaticamente pelo sistema.
+
 
 #### Notação do DER Conceitual
 - **Ferramenta Utilizada:** Criado no software BRMODELO.
