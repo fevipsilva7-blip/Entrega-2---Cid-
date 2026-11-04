@@ -98,69 +98,65 @@
 ---
 
 ### 1.2 Conversão do Modelo Conceitual para o Modelo Lógico
+1. **Entidades → Tabelas:** Cada entidade do modelo conceitual (`CLIENTE`, `PRODUTO`, `CATEGORIA`, `PEDIDO`, `PAGAMENTO`, `ENTREGA`, `FORNECEDOR`, `COMPRA`, `DESPESA` e `FUNCIONARIO`) foi convertida em uma tabela relacional.
+2. **Atributos → Colunas:** Os atributos foram convertidos em colunas com tipos de dados SQL, conforme definidos no modelo lógico e no script.
+3. **Relacionamentos N:N → Tabelas associativas:** O relacionamento N:N entre `PEDIDO` e `PRODUTO` foi convertido na tabela associativa `ITEM_PEDIDO`, que armazena atributos da relação, como quantidade e preço unitário praticado na venda.
+4. **Relacionamentos 1:N:** A chave primária da tabela do lado “1” foi propagada como chave estrangeira na tabela do lado “N”, conforme o relacionamento definido no modelo.
+5. **Relacionamentos 1:1:** `[VALIDAR COM O MODELO LÓGICO]` Conferir se os relacionamentos entre `PEDIDO` e `ENTREGA` e entre `PEDIDO` e `PAGAMENTO` são realmente 1:1 e se existe restrição `UNIQUE` nas respectivas chaves estrangeiras.
 
-1. **Entidades $\rightarrow$ Tabelas:** Cada entidade do modelo conceitual (`CLIENTE`, `PRODUTO`, `CATEGORIA`, `PEDIDO`, `PAGAMENTO`, `ENTREGA`, `FORNECEDOR`, `COMPRA`, `DESPESA`, `FUNCIONARIO`) foi convertida em uma tabela relacional.
-2. **Atributos $\rightarrow$ Colunas:** Atributos simples viraram colunas com seus respectivos tipos de dados SQL (`VARCHAR`, `INT`, `DECIMAL`, `DATETIME`).
-3. **Relacionamentos N:N $\rightarrow$ Tabelas Associativas:** O relacionamento N:N entre `PEDIDO` e `PRODUTO` foi convertido na tabela associativa `ITEM_PEDIDO`, que guarda os atributos próprios da relação (quantidade e preço unitário praticado na venda).
-4. **Relacionamentos 1:N:** A chave primária (PK) da tabela do lado "1" foi propagada como chave estrangeira (FK) na tabela do lado "N" (ex.: `id_cliente` em `PEDIDO`).
-5. **Relacionamentos 1:1:** O relacionamento entre `PEDIDO` e `ENTREGA`/`PAGAMENTO` utiliza a PK de `PEDIDO` como FK com restrição de unicidade (`UNIQUE`), garantindo a integridade do vínculo.
 
 ---
 
 ### 1.3 Definição de Chaves Primárias e Estrangeiras
-
-- `CATEGORIA`: PK (`id_categoria`)
-- `FORNECEDOR`: PK (`id_fornecedor`)
-- `CLIENTE`: PK (`id_cliente`)
-- `FUNCIONARIO`: PK (`id_funcionario`)
-- `PRODUTO`: PK (`id_produto`), FK (`id_categoria` $\rightarrow$ `CATEGORIA.id_categoria`)
-- `PEDIDO`: PK (`id_pedido`), FK (`id_cliente` $\rightarrow$ `CLIENTE.id_cliente`), FK (`id_funcionario` $\rightarrow$ `FUNCIONARIO.id_funcionario`)
-- `ITEM_PEDIDO`: PK Composta (`id_pedido`, `id_produto`), FK (`id_pedido` $\rightarrow$ `PEDIDO.id_pedido`), FK (`id_produto` $\rightarrow$ `PRODUTO.id_produto`)
-- `ENTREGA`: PK (`id_entrega`), FK (`id_pedido` $\rightarrow$ `PEDIDO.id_pedido`)
-- `PAGAMENTO`: PK (`id_pagamento`), FK (`id_pedido` $\rightarrow$ `PEDIDO.id_pedido`)
-- `COMPRA`: PK (`id_compra`), FK (`id_fornecedor` $\rightarrow$ `FORNECEDOR.id_fornecedor`)
-- `DESPESA`: PK (`id_despesa`)
+- `CATEGORIA`: PK (`id_categoria`).
+- `FORNECEDOR`: PK (`id_fornecedor`).
+- `CLIENTE`: PK (`id_cliente`).
+- `FUNCIONARIO`: PK (`id_funcionario`).
+- `PRODUTO`: PK (`id_produto`), FK (`id_categoria` → `CATEGORIA.id_categoria`).
+- `PEDIDO`: PK (`id_pedido`), FK (`id_cliente` → `CLIENTE.id_cliente`), FK (`id_funcionario` → `FUNCIONARIO.id_funcionario`).
+- `ITEM_PEDIDO`: PK composta (`id_pedido`, `id_produto`), FKs (`id_pedido` → `PEDIDO.id_pedido`; `id_produto` → `PRODUTO.id_produto`).
+- `ENTREGA`: PK (`id_entrega`), FK (`id_pedido` → `PEDIDO.id_pedido`).
+- `PAGAMENTO`: PK (`id_pagamento`), FK (`id_pedido` → `PEDIDO.id_pedido`).
+- `COMPRA`: PK (`id_compra`), FK (`id_fornecedor` → `FORNECEDOR.id_fornecedor`).
+- `DESPESA`: PK (`id_despesa`).
 
 ---
 
 ### 1.4 Processo de Normalização (1FN, 2FN e 3FN)
+- **1ª Forma Normal (1FN):** Os atributos devem conter valores atômicos. Os dados de endereço foram separados em campos individuais, e os produtos de cada pedido foram representados na tabela `ITEM_PEDIDO`, em vez de armazenados como uma lista em uma única coluna.
+- **2ª Forma Normal (2FN):** Na tabela associativa `ITEM_PEDIDO`, os atributos próprios da venda, como quantidade e preço unitário praticado, devem depender da chave composta (`id_pedido`, `id_produto`). Os dados cadastrais do produto permanecem na tabela `PRODUTO`.
+- **3ª Forma Normal (3FN):** Os dados de categoria foram separados na tabela `CATEGORIA`, evitando repetir informações descritivas da categoria em cada registro de produto.
 
-- **1ª Forma Normal (1FN):**
-  - **Ação:** Eliminação de atributos multivalorados e compostos. Atributos de endereço do cliente foram atomizados em colunas individuais (`logradouro`, `numero`, `bairro`, `cep`). Listas de itens em pedidos foram removidas e transferidas para a tabela `ITEM_PEDIDO`.
-- **2ª Forma Normal (2FN):**
-  - **Ação:** Eliminação de dependências parciais. Na tabela associativa `ITEM_PEDIDO` (chave composta `id_pedido` + `id_produto`), o atributo `preco_unitario` registrado no momento da compra e a `quantidade` dependem de toda a chave composta, enquanto dados cadastrais do produto pertencem apenas a `PRODUTO`.
-- **3ª Forma Normal (3FN):**
-  - **Ação:** Eliminação de dependências transitivas. Dados da categoria do produto (ex.: `nome_categoria`) foram isolados na tabela `CATEGORIA`, evitando que colunas não-chave dependam de outros atributos não-chave na tabela `PRODUTO`.
 
 ---
 
 ### 1.5 Justificativas Técnicas das Decisões
 
-- **Chaves Primárias Autoincrementais (`INT AUTO_INCREMENT`):** Adotadas para simplificar o indexamento físico no MySQL e acelerar operações de junção (`JOIN`).
-- **Inclusão do atributo `preco_unitario` em `ITEM_PEDIDO`:** Garante o cumprimento da regra `RN04`. Previne que alterações no preço da tabela de produtos afetem o histórico financeiro de vendas passadas.
-- **Uso de Enums / Restrições `CHECK`:** Restrições aplicadas sobre canais de atendimento, formas de pagamento e status (`pendente`, `pago`, `reembolsado`, `cancelado`) garantem a consistência e integridade dos dados no nível do SGBD.
-- **Manutenção de Registros em Cancelamentos:** Atende à regra `RN03`, garantindo a rastreabilidade exigida pela contabilidade e protegendo o sistema contra fraudes ou perdas de dados operacionais.
+- **Chaves primárias autoincrementais (`INT AUTO_INCREMENT`):** Utilizadas para identificar unicamente os registros e facilitar os relacionamentos entre tabelas, conforme implementação no script SQL.
+- **Inclusão do atributo `preco_unitario` em `ITEM_PEDIDO`:** Preserva o preço praticado no momento da venda, evitando que alterações futuras no cadastro do produto modifiquem o histórico de pedidos.
+- **Uso de enums e/ou restrições `CHECK`:** Podem ser utilizados para limitar valores de canais, formas de pagamento e status, desde que correspondam às restrições efetivamente implementadas no script SQL.
+- **Manutenção de registros de cancelamentos:** Permite consultar o histórico de pedidos cancelados, seus motivos e os registros financeiros relacionados.
 
 ---
 
 ### 1.6 Proposta de Arquitetura Analítica para BI e IA
 
 #### Informações Estratégicas e Métricas Gerenciais (KPIs)
-- **KPI 1 — Ticket Médio por Canal de Venda:** Identifica a rentabilidade média dos pedidos vindos do WhatsApp versus aplicativos de delivery.
-- **KPI 2 — Índice de Cancelamento e Reembolso:** Percentual de pedidos cancelados no mês e valor total reembolsado.
-- **KPI 3 — Relatório de Ruptura de Estoque:** Lista de produtos com saldo abaixo do estoque mínimo definido.
-- **KPI 4 — Produtos mais Vendidos:** Ranking de faturamento e volume por item/categoria.
+- **KPI 1 — Vendas por canal:** Permite comparar as vendas realizadas pelo WhatsApp e pelos aplicativos de delivery.
+- **KPI 2 — Cancelamentos e reembolsos:** Apresenta a quantidade de pedidos cancelados e os valores reembolsados.
+- **KPI 3 — Estoque baixo:** Identifica produtos com quantidade abaixo do limite mínimo definido, caso esse limite esteja cadastrado.
+- **KPI 4 — Produtos mais vendidos:** Apresenta o volume de vendas por produto.
+- **KPI 5 — Acompanhamento financeiro:** Permite comparar vendas e despesas em determinado período.
 
 #### Tabela de Rastreabilidade
 
 | Problema ou KPI | Tabelas envolvidas | Consulta no script |
 | :--- | :--- | :--- |
-| `P1` — Gestão de entregas e acompanhamento de status | `PEDIDO`, `ENTREGA`, `CLIENTE` | `G01` |
-| `P2` — Auditoria de cancelamentos e reembolsos | `PEDIDO`, `PAGAMENTO` | `G02` |
-| `P3` — Comparativo de faturamento por canal de vendas | `PEDIDO`, `PAGAMENTO` | `G03` |
-| `KPI 3` — Alertas de ruptura de estoque | `PRODUTO` | `G04` |
-| `RN03` — Verificação de integridade nos pedidos cancelados | `PEDIDO`, `PAGAMENTO` | `A01` |
-| `RN02` — Auditoria de estoque negativo ou incoerente | `PRODUTO` | `A02` |
+| `P1` — Acompanhamento de pedidos e entregas | `PEDIDO`, `ENTREGA`, `CLIENTE` | `[CONFIRMAR IDENTIFICADOR DA CONSULTA]` |
+| `P2` — Histórico de cancelamentos e reembolsos | `PEDIDO`, `PAGAMENTO` | `[CONFIRMAR IDENTIFICADOR DA CONSULTA]` |
+| `P3` — Comparativo de vendas por canal | `PEDIDO`, `PAGAMENTO` | `[CONFIRMAR IDENTIFICADOR DA CONSULTA]` |
+| `KPI 3` — Consulta de estoque baixo | `PRODUTO` | `[CONFIRMAR IDENTIFICADOR DA CONSULTA]` |
+| `KPI 5` — Comparação entre vendas e despesas | `PEDIDO`, `PAGAMENTO`, `DESPESA` | `[CONFIRMAR SE A CONSULTA EXISTE]` |
 
 ---
 
