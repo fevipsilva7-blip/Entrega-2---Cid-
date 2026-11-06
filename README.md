@@ -8,7 +8,7 @@
 
 | Nome completo do aluno | RGM | Usuário do GitHub |
 | :--- | :--- | :--- |
-|  | 48832588 | guelerzao |
+| Augusto de Almeida Guelere | 48832588 | guelerzao |
 | Felipe Rodrigues da Silva | 47868384 | fevipsilva7-blip |
 | Lucas Freitas de Oliveira  | 048587885 | dzskl |
 | Matheus Faustino da Silva | 47854928 | Matheussil01 |
