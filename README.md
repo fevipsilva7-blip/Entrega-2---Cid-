@@ -142,21 +142,46 @@
 ### 1.6 Proposta de Arquitetura Analítica para BI e IA
 
 #### Informações Estratégicas e Métricas Gerenciais (KPIs)
-- **KPI 1 — Vendas por canal:** Permite comparar as vendas realizadas pelo WhatsApp e pelos aplicativos de delivery.
-- **KPI 2 — Cancelamentos e reembolsos:** Apresenta a quantidade de pedidos cancelados e os valores reembolsados.
-- **KPI 3 — Estoque baixo:** Identifica produtos com quantidade abaixo do limite mínimo definido, caso esse limite esteja cadastrado.
-- **KPI 4 — Produtos mais vendidos:** Apresenta o volume de vendas por produto.
-- **KPI 5 — Acompanhamento financeiro:** Permite comparar vendas e despesas em determinado período.
+- **KPI 1 — Faturamento mensal:** acompanha o valor total das vendas concluídas por mês.
+- **KPI 2 — Receita após taxas:** identifica quanto a organização recebe após as taxas dos canais de venda.
+- **KPI 3 — Pedidos concluídos:** acompanha a quantidade de pedidos concluídos mensalmente.
+- **KPI 4 — Ticket médio:** calcula o valor médio dos pedidos concluídos.
+- **KPI 5 — Estoque baixo:** identifica produtos abaixo do estoque mínimo.
+- **KPI 6 — Produtos mais vendidos:** identifica os produtos com maior volume de vendas.
+- **KPI 7 — Vendas por canal:** compara o faturamento e as taxas dos diferentes canais.
+- **KPI 8 — Taxa de cancelamento:** acompanha o percentual de pedidos cancelados.
+- **KPI 9 — Arrecadação por pagamento:** compara os valores recebidos por forma de pagamento.
+- **KPI 10 — Pedidos em aberto:** identifica pedidos que ainda possuem pagamentos pendentes.
+- **KPI 11 — Margem por produto:** calcula a margem bruta gerada pelos produtos.
+- **KPI 12 — Resultado operacional:** estima o resultado após custos, taxas e despesas.
+- **KPI 13 — Clientes sem compra:** identifica clientes cadastrados sem pedidos concluídos.
+- **KPI 14 — Pagamentos divididos:** identifica pedidos pagos por mais de uma transação.
+- **KPI 15 — Estornos:** acompanha os valores estornados em pedidos cancelados.
 
 #### Tabela de Rastreabilidade
 
 | Problema ou KPI | Tabelas envolvidas | Consulta no script |
 | :--- | :--- | :--- |
-| `P1` — Acompanhamento de pedidos e entregas | `PEDIDO`, `ENTREGA`, `CLIENTE` | `[CONFIRMAR IDENTIFICADOR DA CONSULTA]` |
-| `P2` — Histórico de cancelamentos e reembolsos | `PEDIDO`, `PAGAMENTO` | `[CONFIRMAR IDENTIFICADOR DA CONSULTA]` |
-| `P3` — Comparativo de vendas por canal | `PEDIDO`, `PAGAMENTO` | `[CONFIRMAR IDENTIFICADOR DA CONSULTA]` |
-| `KPI 3` — Consulta de estoque baixo | `PRODUTO` | `[CONFIRMAR IDENTIFICADOR DA CONSULTA]` |
-| `KPI 5` — Comparação entre vendas e despesas | `PEDIDO`, `PAGAMENTO`, `DESPESA` | `[CONFIRMAR SE A CONSULTA EXISTE]` |
+| `P1` — Ruptura de estoque | `PRODUTO` | `G03` |
+| `P2` — Acompanhamento financeiro e de vendas | `PEDIDO`, `PAGAMENTO`, `CLIENTE`, `DESPESA` | `G01, G02, G10, G11` |
+| `P3` — Falta de análise dos canais e controle dos recebimentos | `PEDIDO`, `PAGAMENTO` | `G05, G07, G08, G12` |
+| `P4` — Falta de controle de cancelamentos e reembolsos | `PEDIDO`, `PAGAMENTO` | `G06, G13` |
+| `P5` — Desconhecimento dos produtos e da rentabilidade | `PRODUTO`, `PEDIDO`, `ITEM_PEDIDO`, `DESPESA` | `G04, G09, G10` |
+| `KPI 1` — Faturamento mensal | `PEDIDO` | `G01` |
+| `KPI 2` — Receita após taxas | `PEDIDO` | `G01` |
+| `KPI 3` — Pedidos concluídos por mês | `PEDIDO` | `G02` |
+| `KPI 4` — Ticket médio | `PEDIDO` | `G02` |
+| `KPI 5` — Produtos abaixo do estoque mínimo | `PRODUTO` | `G03` |
+| `KPI 6` — Produtos mais vendidos | `PRODUTO`, `PEDIDO`, `ITEM_PEDIDO` | `G04` |
+| `KPI 7` — Vendas por canal | `PEDIDO` | `G05` |
+| `KPI 8` — Taxa de cancelamento | `PEDIDO` | `G06` |
+| `KPI 9` — Arrecadação por forma de pagamento | `PAGAMENTO` | `G07` |
+| `KPI 10` — Pedidos em aberto | `PEDIDO`, `PAGAMENTO` | `G08` |
+| `KPI 11` — Margem por produto | `PRODUTO`, `PEDIDO`, `ITEM_PEDIDO` | `G09` |
+| `KPI 12` — Resultado operacional estimado | `PRODUTO`, `PEDIDO`, `ITEM_PEDIDO`, `DESPESA` | `G10` |
+| `KPI 13` — Clientes sem compra efetiva | `CLIENTE`, `PEDIDO` | `G11` |
+| `KPI 14` — Pedidos com pagamento dividido | `PAGAMENTO`, `PEDIDO` | `G12` |
+| `KPI 15` — Estornos por cancelamento | `PAGAMENTO`, `PEDIDO` | `G13` |
 
 ---
 
@@ -194,10 +219,10 @@ O arquivo contendo a carga de dados está integrado no script principal ou dispo
 
 | Item | O que registrar |
 | :--- | :--- |
-| **Ferramenta e etapa** | ChatGPT (OpenAI) / Gemini (Google) utilizado nas etapas de redação do relatório técnico, estruturação da massa de dados e auxílio na escrita das queries SQL. |
+| **Ferramenta e etapa** | ChatGPT (OpenAI) / Gemini (Google) utilizado nas etapas de redação do relatório técnico, estruturação da massa de dados, auxílio na escrita das queries SQL, pesquisa sobre KPIs de restaurantes e criação de slides. |
 | **Motivação** | Agilizar a estruturação do texto dentro do padrão do esqueleto e acelerar a geração de inserts sintéticos e coerentes para a massa de dados. |
-| **Prompt(s) utilizados** | *"Gere 20 inserts SQL fictícios para a tabela PEDIDO considerando canais como WhatsApp e Delivery, status variados e mantendo coerência com dados de clientes."* |
-| **Resposta recebida** | Códigos `INSERT INTO` contendo dados sintéticos para popular o banco. |
+| **Prompt(s) utilizados** | *"Gere 20 inserts SQL fictícios para a tabela PEDIDO considerando canais como WhatsApp e Delivery, status variados e mantendo coerência com dados de clientes.", "Me envie KPIs que são usadas em resturantes (vendas, financeiros, estoque, atendimentos e clientes)* |
+| **Resposta recebida** | Códigos `INSERT INTO` contendo dados sintéticos para popular o banco. 29 KPIs utilizadas em restaurantes.|
 | **Fontes consultadas e verificadas** | Manual de referência do MySQL 8.0 para validação das sintaxes de `CONSTRAINT` e `CHECK`. |
 | **Trechos rejeitados ou corrigidos** | Foram ajustados os tipos de dados monetários para `DECIMAL(10,2)` onde a IA havia sugerido `FLOAT`. |
 | **Justificativa da escolha final** | O uso de `DECIMAL` evita problemas de arredondamento em cálculos financeiros no MySQL. |
