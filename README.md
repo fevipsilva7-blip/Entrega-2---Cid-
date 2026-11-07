@@ -24,9 +24,17 @@
 - Nome e natureza da organização: Donna Claudia Restaurante e Lanchonete (CNPJ: 36.276.829/0001-69). Trata-se de uma empresa privada comercial com fins lucrativos do ramo alimentício.
 - Contexto e porte: O restaurante está em operação há aproximadamente 2 anos e conta atualmente com 5 funcionários. Atende um volume médio de cerca de 3.000 clientes por mês (aproximadamente 750 pedidos/atendimentos por semana), operando com vendas presenciais, lanches, refeições e forte fluxo via WhatsApp e aplicativos de delivery.
 - **Problemas e necessidades identificados:**
-  - `P1`: **Acompanhamento na operação do Delivery:** Dificuldade no acompanhamento dos pedidos em tempo real, integrando o recebimento de canais externos (WhatsApp/Apps), status de preparo na cozinha e despacho/entrega.
-  - `P2`: **Controle  para Exceções (Cancelamentos/Reembolsos):** Ausência de histórico unificado quando ocorrem problemas na entrega (itens faltantes, divergências de pedido), gerando retrabalho manual e inconsistências na conferência financeira final.
-  - `P3`: **Consolidação dos dados financeiros e dos canais de venda:** necessidade de consultar e comparar as vendas por canal (WhatsApp e aplicativos de delivery) e reunir informações sobre vendas e despesas.
+- - `P1`: **Acompanhamento dos pedidos de delivery:** dificuldade para acompanhar o recebimento, a preparação e o encaminhamento dos pedidos realizados por WhatsApp e aplicativos de delivery.
+
+- `P2`: **Controle de cancelamentos e reembolsos:** necessidade de manter o histórico de pedidos cancelados, motivos, itens e informações financeiras relacionadas.
+
+- `P3`: **Comparação entre canais de venda:** necessidade de consultar e comparar as vendas realizadas presencialmente, pelo WhatsApp e pelos aplicativos de delivery.
+
+- `P4`: **Organização das informações financeiras:** necessidade de acompanhar vendas, pagamentos e despesas por período para facilitar o fechamento e a análise dos resultados.
+
+- `P5`: **Acompanhamento dos produtos e do estoque:** necessidade de identificar produtos abaixo do estoque mínimo, acompanhar compras e reduzir o risco de falta de mercadorias.
+
+  
 
 - **Escopo do sistema:** O banco de dados reúne as informações globais da organização, englobando clientes, produtos, categorias de itens, fornecedores, compras de estoque, despesas, funcionários, pedidos, itens do pedido, status de entrega e registros de pagamento/reembolso.
 - **Justificativa da escolha:** Organização real de pequeno porte com operação intensa e processos de negócio bem delimitados. Apresenta desafios reais de gestão de dados adequados para o desenvolvimento da modelagem relacional.
