@@ -238,11 +238,12 @@ Com isso, todas as 13 tabelas estão na 3FN.
 
 | Problema ou KPI | Tabelas envolvidas | Consulta no script |
 | :--- | :--- | :--- |
-| `P1` — Ruptura de estoque | `PRODUTO` | `G03` |
-| `P2` — Acompanhamento financeiro e de vendas | `PEDIDO`, `PAGAMENTO`, `CLIENTE`, `DESPESA` | `G01, G02, G10, G11` |
-| `P3` — Falta de análise dos canais e controle dos recebimentos | `PEDIDO`, `PAGAMENTO` | `G05, G07, G08, G12` |
-| `P4` — Falta de controle de cancelamentos e reembolsos | `PEDIDO`, `PAGAMENTO` | `G06, G13` |
-| `P5` — Desconhecimento dos produtos e da rentabilidade | `PRODUTO`, `PEDIDO`, `ITEM_PEDIDO`, `DESPESA` | `G04, G09, G10` |
+| `P1` — Acompanhamento dos pedidos de delivery | `PEDIDO`, `ITEM_PEDIDO`, `ENTREGA`, `CLIENTE`, `FUNCIONARIO` | `G11, G12` |
+| `P2` — Controle de cancelamentos e reembolsos | `PEDIDO`, `ITEM_PEDIDO`, `PAGAMENTO` | `G06, G13` |
+| `P3` — Comparação entre canais de venda | `PEDIDO`, `PAGAMENTO` | `G05, G07` |
+| `P4` — Organização das informações financeiras | `PEDIDO`, `PAGAMENTO`, `DESPESA` | `G01, G02, G08, G10` |
+| `P5` — Acompanhamento dos produtos e do estoque | `PRODUTO`, `CATEGORIA`, `FORNECEDOR`, `COMPRA`, `ITEM_COMPRA` | `G03, G04, G09` |
+`ITEM_PEDIDO`, `DESPESA` | `G04, G09, G10` |
 | `KPI 1` — Faturamento mensal | `PEDIDO` | `G01` |
 | `KPI 2` — Receita após taxas | `PEDIDO` | `G01` |
 | `KPI 3` — Pedidos concluídos por mês | `PEDIDO` | `G02` |
