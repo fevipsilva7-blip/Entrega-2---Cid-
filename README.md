@@ -96,12 +96,13 @@
 - **Link/Imagem do DER:** ![DER Conceitual](./DER%20conceitual/der_conceitual.png)
 
 #### Ajustes do Modelo em Relação à Entrega 1
+| Apontamento da Entrega 1 | Alteração realizada | Justificativa |
+|---|---|---|
+| Ausência de controle dos itens do pedido | Criada a entidade associativa `ITEM_PEDIDO` | Permitir registrar vários produtos no mesmo pedido |
+| Falta de controle de compras | Criadas `COMPRA` e `ITEM_COMPRA` | Registrar produtos adquiridos e seus custos |
+| Falta de acompanhamento de entregas | Criada a entidade `ENTREGA` | Controlar pedidos enviados por delivery |
 
-| Apontamento da correção da E1 | O que mudou no trabalho | Por quê |
-| :--- | :--- | :--- |
-| *Exemplo: Ausência de entidade para cancelamentos/reembolsos* | *Criado o controle de status e histórico financeiro na tabela PAGAMENTO e PEDIDO* | *Para cobrir o problema P2 e garantir que valores estornados sejam computados na auditoria de caixa.* |
-| *Exemplo: Ausência de vínculo de canal de venda* | *Adicionado o campo do canal do pedido (WhatsApp vs. Apps)* | *Necessário para resolver o problema P3 de comparação de métricas.* |
-| `[PREENCHER OU ADAPTAR - Inserir correções feitas]` | `[PREENCHER - Detalhar alteração]` | `[PREENCHER - Justificar]` |
+
 
 ---
 
