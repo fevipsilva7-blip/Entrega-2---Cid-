@@ -98,35 +98,103 @@
 ---
 
 ### 1.2 Conversão do Modelo Conceitual para o Modelo Lógico
-1. **Entidades → Tabelas:** Cada entidade do modelo conceitual (`CLIENTE`, `PRODUTO`, `CATEGORIA`, `PEDIDO`, `PAGAMENTO`, `ENTREGA`, `FORNECEDOR`, `COMPRA`, `DESPESA` e `FUNCIONARIO`) foi convertida em uma tabela relacional.
-2. **Atributos → Colunas:** Os atributos foram convertidos em colunas com tipos de dados SQL, conforme definidos no modelo lógico e no script.
-3. **Relacionamentos N:N → Tabelas associativas:** O relacionamento N:N entre `PEDIDO` e `PRODUTO` foi convertido na tabela associativa `ITEM_PEDIDO`, que armazena atributos da relação, como quantidade e preço unitário praticado na venda.
-4. **Relacionamentos 1:N:** A chave primária da tabela do lado “1” foi propagada como chave estrangeira na tabela do lado “N”, conforme o relacionamento definido no modelo.
-5. **Relacionamentos 1:1:** `[VALIDAR COM O MODELO LÓGICO]` Conferir se os relacionamentos entre `PEDIDO` e `ENTREGA` e entre `PEDIDO` e `PAGAMENTO` são realmente 1:1 e se existe restrição `UNIQUE` nas respectivas chaves estrangeiras.
 
+O modelo lógico foi obtido do DER conceitual aplicando as regras de conversão abaixo. O resultado são 13 tabelas: 11 vindas de entidades e 2 tabelas associativas (`ITEM_PEDIDO` e `ITEM_COMPRA`).
+
+1. **Entidades → Tabelas:** Cada entidade do modelo conceitual (`CLIENTE`, `ENDERECO`, `PRODUTO`, `CATEGORIA`, `PEDIDO`, `PAGAMENTO`, `ENTREGA`, `FORNECEDOR`, `COMPRA`, `DESPESA` e `FUNCIONARIO`) foi convertida em uma tabela relacional, com uma chave primária inteira própria (`id_<entidade>`).
+2. **Atributos → Colunas:** Cada atributo virou uma coluna com tipo SQL, conforme o modelo lógico e o script. Os campos monetários usam `DECIMAL(10,2)`. O brModelo não oferece esse tipo e mostra `FLOAT` no diagrama, por isso o dicionário de dados e o script SQL são a referência dos tipos.
+3. **Atributo composto e multivalorado → Tabela própria:** O endereço do cliente (rua, número, bairro, CEP e complemento) é composto, e um cliente pode ter mais de um endereço de entrega. Por isso ele virou a tabela `ENDERECO`, com FK para `CLIENTE`. `[VALIDAR COM O DER CONCEITUAL: confirmar que ENDERECO é tratado assim no modelo conceitual]`
+4. **Relacionamentos N:N → Tabelas associativas:** Dois relacionamentos N:N foram convertidos em tabelas associativas, cada uma com os atributos próprios da relação:
+   - `PEDIDO` N:N `PRODUTO` → `ITEM_PEDIDO` (`quantidade` e `preco_unitario`, o preço praticado na venda).
+   - `COMPRA` N:N `PRODUTO` → `ITEM_COMPRA` (`quantidade` e `custo_unitario`, o custo pago na compra).
+
+   Em ambas, a PK é composta pelas duas chaves estrangeiras.
+5. **Relacionamentos 1:N:** A chave primária da tabela do lado “1” foi propagada como chave estrangeira na tabela do lado “N”:
+   - `CATEGORIA` 1:N `PRODUTO` (`PRODUTO.id_categoria`)
+   - `CLIENTE` 1:N `PEDIDO` (`PEDIDO.id_cliente`)
+   - `FUNCIONARIO` 1:N `PEDIDO` (`PEDIDO.id_funcionario`)
+   - `CLIENTE` 1:N `ENDERECO` (`ENDERECO.id_cliente`)
+   - `ENDERECO` 1:N `ENTREGA` (`ENTREGA.id_endereco`)
+   - `PEDIDO` 1:N `PAGAMENTO` (`PAGAMENTO.id_pedido`)
+   - `FORNECEDOR` 1:N `COMPRA` (`COMPRA.id_fornecedor`)
+   - `FUNCIONARIO` 1:N `DESPESA` (`DESPESA.id_funcionario`)
+6. **Relacionamentos 1:1:** `PEDIDO` e `ENTREGA` têm relação 1:1: um pedido de delivery gera uma única entrega. Para garantir isso, a FK `ENTREGA.id_pedido` recebe a restrição `UNIQUE`. `[VALIDAR NO SCRIPT SQL: confirmar o UNIQUE em ENTREGA.id_pedido]` Já `PEDIDO` e `PAGAMENTO` são **1:N**, e não 1:1, porque um pedido pode ser pago em mais de uma transação (RF05 e KPI 14, pedidos com pagamento dividido) e pode ter pagamento reembolsado (KPI 15). Por isso `PAGAMENTO.id_pedido` não tem `UNIQUE`.
 
 ---
 
 ### 1.3 Definição de Chaves Primárias e Estrangeiras
-- `CATEGORIA`: PK (`id_categoria`).
-- `FORNECEDOR`: PK (`id_fornecedor`).
-- `CLIENTE`: PK (`id_cliente`).
-- `FUNCIONARIO`: PK (`id_funcionario`).
-- `PRODUTO`: PK (`id_produto`), FK (`id_categoria` → `CATEGORIA.id_categoria`).
-- `PEDIDO`: PK (`id_pedido`), FK (`id_cliente` → `CLIENTE.id_cliente`), FK (`id_funcionario` → `FUNCIONARIO.id_funcionario`).
-- `ITEM_PEDIDO`: PK composta (`id_pedido`, `id_produto`), FKs (`id_pedido` → `PEDIDO.id_pedido`; `id_produto` → `PRODUTO.id_produto`).
-- `ENTREGA`: PK (`id_entrega`), FK (`id_pedido` → `PEDIDO.id_pedido`).
-- `PAGAMENTO`: PK (`id_pagamento`), FK (`id_pedido` → `PEDIDO.id_pedido`).
-- `COMPRA`: PK (`id_compra`), FK (`id_fornecedor` → `FORNECEDOR.id_fornecedor`).
-- `DESPESA`: PK (`id_despesa`).
+
+#### Chaves primárias
+
+Todas as tabelas que representam uma entidade usam uma PK **substituta**, do tipo `INT AUTO_INCREMENT`. Nenhum atributo do negócio serve bem como chave: nomes se repetem, telefones mudam e descrições podem ser editadas. Um inteiro curto e sem significado próprio nunca precisa ser alterado, ocupa pouco espaço nas FKs e agiliza os `JOIN`s. No caso de `PEDIDO`, o `AUTO_INCREMENT` também gera a numeração única e sequencial exigida pela `RN05`.
+
+As tabelas associativas usam **PK composta**, formada pelas duas FKs. Isso identifica cada linha pelo par (pedido, produto) ou (compra, produto) e impede que o mesmo produto apareça duas vezes no mesmo pedido ou na mesma compra; se o cliente pede mais unidades, aumenta-se a `quantidade`. Não é necessário criar uma chave artificial para essas tabelas.
+
+#### Resumo de chaves e justificativas
+
+| Tabela | Chave primária | Chaves estrangeiras | Justificativa |
+| :--- | :--- | :--- | :--- |
+| `CATEGORIA` | `id_categoria` | — | Identifica a categoria sem depender do nome, que pode ser renomeado. |
+| `FORNECEDOR` | `id_fornecedor` | — | Dois fornecedores podem ter nomes parecidos; o código identifica cada um. |
+| `CLIENTE` | `id_cliente` | — | O telefone muda e pode ser compartilhado, então não serve como chave. |
+| `FUNCIONARIO` | `id_funcionario` | — | Identifica o funcionário em pedidos e despesas sem expor dados pessoais. |
+| `PRODUTO` | `id_produto` | `id_categoria` → `CATEGORIA.id_categoria` | Todo produto pertence a uma categoria existente, e a FK impede categoria inválida. |
+| `PEDIDO` | `id_pedido` | `id_cliente` → `CLIENTE.id_cliente`<br>`id_funcionario` → `FUNCIONARIO.id_funcionario` | Numeração única e sequencial (RN05). As FKs registram quem comprou e quem atendeu. |
+| `ITEM_PEDIDO` | (`id_pedido`, `id_produto`) | `id_pedido` → `PEDIDO.id_pedido`<br>`id_produto` → `PRODUTO.id_produto` | A PK composta evita o mesmo produto repetido no pedido; as FKs impedem item sem pedido ou sem produto. |
+| `ENDERECO` | `id_endereco` | `id_cliente` → `CLIENTE.id_cliente` | Um cliente pode ter vários endereços; cada um pertence a um cliente existente. |
+| `PAGAMENTO` | `id_pagamento` | `id_pedido` → `PEDIDO.id_pedido` | Um pedido pode ter vários pagamentos (pagamento dividido e reembolso), então o pagamento tem chave própria. |
+| `ENTREGA` | `id_entrega` | `id_pedido` → `PEDIDO.id_pedido`<br>`id_endereco` → `ENDERECO.id_endereco` | Liga a entrega ao pedido e ao endereço de destino, que precisa existir (RN01). |
+| `COMPRA` | `id_compra` | `id_fornecedor` → `FORNECEDOR.id_fornecedor` | Toda compra tem um fornecedor cadastrado. |
+| `ITEM_COMPRA` | (`id_compra`, `id_produto`) | `id_compra` → `COMPRA.id_compra`<br>`id_produto` → `PRODUTO.id_produto` | Mesmo raciocínio de `ITEM_PEDIDO`: um produto por compra, com quantidade e custo. |
+| `DESPESA` | `id_despesa` | `id_funcionario` → `FUNCIONARIO.id_funcionario` | Registra quem lançou a despesa. |
+
+#### Justificativa das chaves estrangeiras
+
+As chaves estrangeiras representam os relacionamentos do modelo e garantem a **integridade referencial**: o banco recusa um pedido de cliente inexistente, um item de produto removido ou uma entrega sem endereço. Algumas decisões merecem destaque:
+
+- **`PEDIDO.id_cliente` é opcional.** A `RN01` exige dados do cliente apenas para pedidos com entrega; pedidos presenciais podem ser registrados sem cliente. `[VALIDAR NO SCRIPT SQL: confirmar que a coluna aceita NULL]`
+- **`ENTREGA.id_endereco` é obrigatória.** Uma entrega sem endereço de destino não pode ser realizada (`RN01`).
+- **`PAGAMENTO.id_pedido` aponta para o pedido, e não o contrário.** Assim um mesmo pedido pode ter vários pagamentos, o que atende o KPI 14.
+- **As FKs não usam exclusão em cascata.** Pedidos cancelados e seus registros financeiros devem ser preservados (`RN03`), então não se apaga um registro que ainda é referenciado. `[VALIDAR NO SCRIPT SQL: ON DELETE/ON UPDATE]`
 
 ---
 
 ### 1.4 Processo de Normalização (1FN, 2FN e 3FN)
-- **1ª Forma Normal (1FN):** Os atributos devem conter valores atômicos. Os dados de endereço foram separados em campos individuais, e os produtos de cada pedido foram representados na tabela `ITEM_PEDIDO`, em vez de armazenados como uma lista em uma única coluna.
-- **2ª Forma Normal (2FN):** Na tabela associativa `ITEM_PEDIDO`, os atributos próprios da venda, como quantidade e preço unitário praticado, devem depender da chave composta (`id_pedido`, `id_produto`). Os dados cadastrais do produto permanecem na tabela `PRODUTO`.
-- **3ª Forma Normal (3FN):** Os dados de categoria foram separados na tabela `CATEGORIA`, evitando repetir informações descritivas da categoria em cada registro de produto.
 
+#### 1ª Forma Normal (1FN)
+
+Na 1FN, todo atributo tem um único valor atômico e não há grupos repetidos. Foram feitos estes ajustes:
+
+- **Itens de pedido e de compra:** Em vez de guardar a lista de produtos em uma coluna do pedido ou da compra, cada produto ocupa uma linha própria em `ITEM_PEDIDO` ou `ITEM_COMPRA`.
+- **Endereço:** Os dados de endereço foram separados em colunas individuais (`rua`, `numero`, `bairro`, `cep` e `complemento`), e como um cliente pode ter mais de um, eles ficam em uma tabela própria (`ENDERECO`).
+- **Telefones de `CLIENTE`:** A tabela tem `telefone` e `telefone_2`. Cada coluna guarda um único valor, mas estritamente são dois campos do mesmo tipo. A decisão proposta é mantê-los, porque o modelo prevê apenas um telefone principal e um alternativo, e nenhum requisito ou KPI do relatório exige consultar todos os telefones de um cliente. `[VALIDAR COM O GRUPO: manter os dois campos ou criar uma tabela TELEFONE]`
+
+#### 2ª Forma Normal (2FN)
+
+A 2FN exige que todo atributo que não faz parte da chave dependa da chave inteira, e não de apenas uma parte dela. Isso só importa nas tabelas com PK composta. Nas demais, a PK tem uma única coluna e a condição já é satisfeita.
+
+**Normalização de `ITEM_PEDIDO`** (PK: `id_pedido` + `id_produto`):
+
+- **1FN:** cada linha representa um produto em um pedido, com valores atômicos e sem listas.
+- **2FN:** `quantidade` e `preco_unitario` dependem do par (pedido, produto) por inteiro: a quantidade de um produto é diferente em cada pedido, e o preço praticado também. O nome, a descrição e o preço atual do produto dependeriam só de `id_produto`, ou seja, de parte da chave. Por isso ficam em `PRODUTO`, e não em `ITEM_PEDIDO`.
+- **3FN:** nenhum atributo não-chave determina outro. `preco_unitario` não é repetição de `PRODUTO.preco`: é o preço **praticado na venda**, que pode ser diferente do preço atual (`RN04`). O subtotal do item não é armazenado, porque é calculável (`quantidade × preco_unitario`).
+
+**Normalização de `ITEM_COMPRA`** (PK: `id_compra` + `id_produto`):
+
+- **1FN:** cada linha representa um produto em uma compra.
+- **2FN:** `quantidade` e `custo_unitario` dependem do par (compra, produto) por inteiro. O fornecedor depende só de `id_compra`, e por isso `id_fornecedor` fica em `COMPRA`; se estivesse em `ITEM_COMPRA`, seria uma dependência parcial e seria repetido a cada item.
+- **3FN:** `custo_unitario` é o custo pago naquela compra, que muda de uma compra para outra. Não é derivado de `PRODUTO.preco`, que é o preço de venda.
+
+#### 3ª Forma Normal (3FN)
+
+A 3FN exige que nenhum atributo não-chave dependa de outro atributo não-chave (dependência transitiva). Foram aplicados estes ajustes:
+
+- **Categoria:** `PRODUTO` guarda apenas `id_categoria`. O nome da categoria fica em `CATEGORIA`, e assim não se repete em cada produto.
+- **Cliente, funcionário e fornecedor:** `PEDIDO`, `COMPRA` e `DESPESA` guardam só as chaves estrangeiras; nome, telefone e cargo ficam nas tabelas de origem.
+- **Endereço de entrega:** `ENTREGA` guarda `id_endereco` e não repete rua, bairro ou CEP.
+- **Dados derivados:** o subtotal de cada item e o total do pedido podem ser calculados a partir de `ITEM_PEDIDO`, então não precisam ser guardados. `[VALIDAR NO SCRIPT SQL: se existir valor_total em PEDIDO (usado nos KPIs 1, 2 e 4), justificar como desnormalização controlada para consulta]`
+
+Com isso, todas as 13 tabelas estão na 3FN.
 
 ---
 
@@ -232,4 +300,3 @@ O arquivo contendo a carga de dados está integrado no script principal ou dispo
 
 ## 7. Apresentação Corporativa Final
 [Acessar Slides](./docs/apresentacao.pdf)
-
