@@ -273,7 +273,8 @@ O script SQL completo para criação do banco de dados MySQL, inserção de tabe
 
 A massa de dados foi elaborada de forma fictícia e coerente com a escala da organização (simulando proporções reais de seus 3.000 atendimentos mensais) para testar o comportamento do sistema sob cenários operacionais variados.
 
-O arquivo contendo a carga de dados está integrado no script principal ou disponível separadamente em:[Acessar Massa de Dados](./docs/massa_de_dados.sql)
+Os comandos INSERT INTO da massa de dados estão integrados ao script principal. Acesse o arquivo docs/script.sql para consultar a criação do banco, as tabelas, as restrições, a massa fictícia e as consultas SQL.
+
 
 
 ---
