@@ -1,312 +1,671 @@
-# Levantamento de Requisitos — Donna Claudia Restaurante e Lanchonete
+Base para a modelagem do sistema
 
-## 1. Identificação da organização
+Donna Claudia Restaurante e Lanchonete
 
-- **Nome da organização:** Donna Claudia Restaurante e Lanchonete.
-- **CNPJ:** 36.276.829/0001-69.
-- **Endereço:** Rua Maciel Monteiro, nº 264.
-- **Natureza:** Empresa privada com fins lucrativos, do ramo alimentício.
-- **Responsável entrevistada:** Antonia Claudia Freitas da Silva Oliveira.
-- **Cargo:** Proprietária e responsável pela administração do estabelecimento.
-- **Autorização:** A proprietária autorizou a utilização de seu nome completo neste trabalho.
-- **Tempo de funcionamento:** Aproximadamente dois anos.
-- **Quantidade de funcionários:** Cinco.
-- **Média de atendimento:** Aproximadamente 3.000 pessoas por mês.
+Este documento consolida os processos, problemas, requisitos, regras de negócio, entidades e decisões que devem ser utilizados pelo grupo para finalizar o DER, o modelo lógico, o SQL, o dicionário de dados e a massa de dados.
 
-Os contatos de e-mail, telefone comercial, site e redes sociais não foram informados durante as entrevistas.
+A proposta foi mantida compatível com o diagrama atual. Portanto, não foram criadas entidades novas para histórico de estoque, histórico separado de preços, taxas de aplicativos, reembolso ou estorno.
 
-## 2. Registro das entrevistas
 
-Foram realizadas duas entrevistas presenciais com a proprietária da Donna Claudia Restaurante e Lanchonete, ambas em 20/10/2026.
 
-- **Data:** 20/10/2026.
-- **Entrevistada:** Antonia Claudia Freitas da Silva Oliveira.
-- **Cargo:** Proprietária.
-- **Integrante participante:** Lucas Freitas de Oliveira.
-- **Participação:** Lucas Freitas de Oliveira participou das duas entrevistas.
-- **Objetivo:** Conhecer os processos administrativos e operacionais do estabelecimento, identificar dificuldades, validar informações e levantar requisitos para a modelagem do banco de dados.
 
-A primeira entrevista teve como foco a caracterização da organização, os processos de negócio, os requisitos funcionais e não funcionais e as regras operacionais.
+1. Processos da organização
 
-A segunda entrevista foi realizada para complementar e validar as informações anteriores, detalhar situações de cancelamento e reembolso, identificar informações que precisam manter histórico e levantar indicadores importantes para a administração.
+1.1 Cadastro de clientes e endereços
 
-## 3. Caracterização dos processos da organização
+Para pedidos de delivery, o restaurante coleta o nome, o telefone e o endereço do cliente. O endereço contém rua, número, bairro, CEP e complemento.
 
-### 3.1 Funcionamento geral
+O sistema deve permitir organizar os dados do cliente e relacioná-los ao endereço utilizado para a entrega. O telefone principal e o telefone alternativo ficam registrados no cadastro de cliente, conforme o modelo atual.
 
-O restaurante trabalha com a venda de refeições e lanches, atendendo clientes presencialmente e por meio de canais de delivery.
+1.2 Recebimento e acompanhamento de pedidos
 
-A proprietária participa da administração e costuma realizar a abertura do estabelecimento. Durante o expediente, os funcionários executam as atividades necessárias para o funcionamento. O fechamento é acompanhado pelo gerente ou pela própria proprietária.
+Os pedidos podem ser recebidos pelo WhatsApp, por aplicativos de delivery ou presencialmente. Após o recebimento, o pedido é conferido e encaminhado para preparação.
 
-O estabelecimento conta com cinco funcionários e utiliza ferramentas digitais para auxiliar no controle das atividades.
+O sistema deve registrar:
 
-### 3.2 Sistemas e ferramentas utilizados
+•
+número do pedido;
 
-Atualmente, o restaurante utiliza:
+•
+data e hora;
 
-- **Bion Finance:** sistema online utilizado para organizar informações de vendas, despesas e estoque.
-- **WhatsApp:** canal utilizado para receber pedidos dos clientes.
-- **Aplicativos de delivery:** utilizados para receber e acompanhar pedidos.
-- **Aplicativos de fornecedores e mercados:** utilizados para realizar compras e acompanhar algumas entregas de mercadorias.
+•
+canal de atendimento;
 
-O Bion Finance continua sendo utilizado pela organização. Portanto, o projeto de banco de dados considera as necessidades de organização e consulta das informações, sem afirmar que o estabelecimento pretende substituir seu sistema atual.
+•
+cliente, quando aplicável;
 
-### 3.3 Cadastro de clientes
+•
+funcionário responsável;
 
-Para pedidos de delivery, são solicitadas informações básicas do cliente, principalmente:
+•
+situação do pedido;
 
-- Nome;
-- Telefone;
-- Endereço.
+•
+observações;
 
-Essas informações são necessárias para identificar o cliente e permitir a entrega do pedido.
+•
+valor total;
 
-Informações adicionais, como segundo telefone e observações, podem ser opcionais.
+•
+produtos e quantidades.
 
-### 3.4 Recebimento e preparação dos pedidos
+1.3 Preparação e entrega
 
-O cliente realiza o pedido pelo WhatsApp ou por um aplicativo de delivery.
+Depois de registrado, o pedido é encaminhado para preparação. Quando o pedido é de delivery, ele pode possuir uma entrega associada.
 
-Após o recebimento, são verificadas as informações necessárias para o atendimento. O pedido é encaminhado para a preparação na cozinha e, quando fica pronto, é enviado ao endereço informado pelo cliente, quando se trata de uma entrega.
+A entrega deve registrar:
 
-O processo envolve diferentes atividades e funcionários, principalmente na recepção, preparação e encaminhamento dos pedidos.
+•
+pedido relacionado;
 
-### 3.5 Controle de estoque
+•
+endereço de destino;
 
-O controle de estoque é realizado pelo Bion Finance, que apresenta avisos quando algum produto está próximo de acabar.
+•
+situação da entrega;
 
-O gerente ou a proprietária verifica as informações e atualiza o estoque diariamente.
+•
+horário de saída;
 
-Conforme confirmação posterior, o restaurante impede a venda de produtos quando não há quantidade disponível em estoque.
+•
+horário de conclusão.
 
-O sistema proposto deve considerar o registro das quantidades disponíveis, os limites mínimos e o histórico de alterações.
+Pedidos presenciais não precisam possuir registro de entrega.
 
-### 3.6 Compras e fornecedores
+1.4 Cadastro de produtos e categorias
 
-O restaurante realiza compras por meio de aplicativos de fornecedores e também diretamente em mercados.
+Os produtos são organizados por categorias. O cadastro de produto deve conter:
 
-Quando as mercadorias são recebidas ou retiradas, é realizada uma conferência com base na nota da compra.
+•
+nome;
 
-O controle dessas informações é importante para acompanhar os produtos adquiridos e os custos relacionados ao estoque.
+•
+descrição;
 
-### 3.7 Pagamentos
+•
+preço atual;
 
-O restaurante aceita diferentes formas de pagamento:
+•
+quantidade disponível em estoque;
 
-- Dinheiro;
-- Pix;
-- Cartão.
+•
+estoque mínimo;
 
-O registro dos pagamentos é importante para acompanhar as movimentações financeiras e facilitar a conferência do caixa.
+•
+categoria relacionada.
 
-### 3.8 Cancelamentos, devoluções e reembolsos
+1.5 Controle de estoque
 
-Os cancelamentos e problemas de pedidos acontecem principalmente nos aplicativos de delivery.
+O restaurante utiliza o Bion Finance para acompanhar o estoque e receber alertas quando os produtos estão próximos de acabar. O gerente ou a proprietária verifica as quantidades diariamente.
 
-Entre as situações relatadas estão pedidos entregues incorretamente ou com itens faltantes.
+Nesta entrega, o controle será feito pela quantidade atual e pelo estoque mínimo armazenados na tabela PRODUTO. A consulta de estoque baixo deverá localizar produtos cuja quantidade esteja menor ou igual ao estoque mínimo.
 
-Dependendo do problema, o restaurante pode realizar o reembolso do valor ou preparar outro pedido para o cliente.
+Não será criada uma tabela separada de movimentação de estoque, pois ela não existe no diagrama atual.
 
-Essas ocorrências demonstram a importância de manter um histórico dos pedidos, dos motivos de cancelamento e dos pagamentos ou reembolsos realizados.
+1.6 Compras e fornecedores
 
-### 3.9 Fechamento e controle financeiro
+O restaurante realiza compras com fornecedores e também diretamente em mercados. A compra é conferida com base na nota ou nos produtos recebidos.
 
-O fechamento do caixa é realizado pelo gerente ou pela proprietária, utilizando o Bion Finance para consultar e conferir as movimentações.
+O sistema deve registrar:
 
-A proprietária considera importantes as consultas de vendas mensais, os relatórios de despesas e a comparação entre os valores vendidos e os gastos do período.
+•
+fornecedor;
 
-## 4. Problemas e necessidades identificados
+•
+data da compra;
 
-Com base nas entrevistas, foram identificados os seguintes pontos de atenção:
+•
+produtos comprados;
 
-### P1 — Organização dos pedidos de delivery
+•
+quantidade;
 
-O delivery exige atenção porque envolve o recebimento dos pedidos, a preparação e o encaminhamento correto para os clientes.
+•
+custo unitário.
 
-O acompanhamento das informações e dos diferentes canais de atendimento é importante para reduzir erros e retrabalho.
+Como uma compra pode conter vários produtos e um produto pode aparecer em várias compras, o relacionamento é representado pela entidade associativa ITEM_COMPRA.
 
-### P2 — Controle de cancelamentos e reembolsos
+1.7 Pagamentos
 
-Quando ocorre algum problema, como pedido incorreto ou item faltante, pode ser necessário realizar um reembolso ou preparar um novo pedido.
+O restaurante aceita dinheiro, Pix e cartão. O pagamento deve ser relacionado ao pedido correspondente e deve registrar:
 
-É importante manter o histórico dessas ocorrências para facilitar a conferência financeira e evitar perda de informações.
+•
+forma de pagamento;
 
-### P3 — Comparação entre canais de venda
+•
+valor;
 
-O restaurante utiliza WhatsApp e aplicativos de delivery. Foi identificada a necessidade de consultar e comparar melhor as vendas realizadas por cada canal.
+•
+situação;
 
-### P4 — Organização das informações financeiras
+•
+data e hora;
 
-A proprietária considera importante visualizar as vendas e despesas de cada mês de forma organizada, facilitando a análise dos resultados do estabelecimento.
+•
+pedido relacionado.
 
-### P5 — Acompanhamento do estoque
+O modelo atual permite mais de um registro de pagamento para o mesmo pedido. Essa decisão representa pagamento dividido ou mais de uma movimentação financeira relacionada ao pedido.
 
-O controle de estoque já é realizado pelo sistema atual, mas o registro de alterações e o acompanhamento dos produtos são importantes para evitar divergências e falta de mercadorias.
+1.8 Cancelamentos e reembolsos
 
-## 5. Requisitos do sistema
+Cancelamentos e problemas ocorrem principalmente em pedidos de delivery. As situações relatadas incluem pedidos entregues incorretamente e itens faltantes.
 
-Os requisitos abaixo representam as necessidades levantadas para o sistema proposto.
+O restaurante pode realizar um reembolso ou preparar outro pedido, dependendo da situação. Nesta entrega, o histórico básico será mantido em PEDIDO e PAGAMENTO:
 
-### 5.1 Requisitos funcionais
+•
+o pedido permanece registrado;
 
-| Código | Requisito |
-|---|---|
-| RF01 | Permitir o cadastro de clientes com nome, telefone e endereço. |
-| RF02 | Permitir o cadastro de produtos com código, nome, categoria, preço e quantidade em estoque. |
-| RF03 | Registrar pedidos com número único, data, cliente, canal de atendimento, valor total e situação. |
-| RF04 | Registrar os produtos de cada pedido, suas quantidades e os preços praticados. |
-| RF05 | Registrar pagamentos, incluindo valor, forma de pagamento e situação. |
-| RF06 | Permitir o acompanhamento das quantidades disponíveis em estoque e a identificação de produtos próximos do limite mínimo. |
-| RF07 | Impedir a venda de produtos sem quantidade disponível em estoque. |
-| RF08 | Registrar cancelamentos, seus motivos e os respectivos históricos financeiros. |
-| RF09 | Manter o histórico de alterações de preços e estoque. |
-| RF10 | Permitir consultas de vendas e despesas por período. |
-| RF11 | Permitir a comparação de vendas por canal de atendimento. |
-| RF12 | Permitir a consulta de produtos mais vendidos, pagamentos pendentes e pedidos cancelados. |
+•
+o status indica o cancelamento;
 
-### 5.2 Requisitos não funcionais
+•
+o motivo do cancelamento é armazenado;
 
-| Código | Requisito |
-|---|---|
-| RNF01 | O sistema deve funcionar em computador e celular. |
-| RNF02 | O sistema deve possuir interface simples e de fácil utilização. |
-| RNF03 | O sistema deve permitir o acesso online. |
-| RNF04 | O sistema deve considerar aproximadamente dois usuários simultâneos. |
-| RNF05 | O acesso às informações financeiras deve ser controlado por permissões. |
-| RNF06 | O sistema deve permitir a atualização das informações quando houver retorno após uma indisponibilidade. |
-| RNF07 | Os dados pessoais dos clientes devem ser tratados com cuidado, respeitando a legislação de proteção de dados. |
+•
+os itens continuam associados ao pedido;
 
-## 6. Regras de negócio
+•
+os registros financeiros permanecem relacionados ao pedido.
 
-As regras foram organizadas conforme as informações fornecidas nas entrevistas. Quando uma condição não foi confirmada, ela está identificada como proposta ou ponto a validar.
+Não será criada uma entidade específica para reembolso ou estorno, pois ela não existe no diagrama atual.
 
-### 6.1 Regras identificadas nas entrevistas
+1.9 Registro de despesas e fechamento financeiro
 
-- **RN01 — Cadastro para delivery:** pedidos de entrega precisam das informações do cliente, incluindo nome, telefone e endereço.
-- **RN02 — Controle de estoque:** não é permitida a venda de produtos sem quantidade disponível em estoque.
-- **RN03 — Histórico de cancelamentos:** pedidos cancelados devem permanecer registrados, incluindo número, data, valor, produtos e motivo do cancelamento.
-- **RN04 — Histórico de preços:** alterações nos preços dos produtos devem preservar os valores praticados em vendas anteriores.
-- **RN05 — Identificação dos registros:** pedidos, produtos e pagamentos precisam possuir códigos próprios para evitar confusão entre registros.
-- **RN06 — Registro financeiro:** pagamentos e reembolsos precisam permanecer associados aos respectivos pedidos.
-- **RN07 — Histórico de estoque:** alterações nas quantidades dos produtos devem ser registradas para permitir consultas posteriores.
-- **RN08 — Atendimento em caso de falha:** quando o sistema estiver indisponível, as informações podem ser controladas manualmente e atualizadas posteriormente.
+O gerente ou a proprietária acompanha o fechamento do caixa utilizando o Bion Finance. As despesas devem ser registradas com:
 
-### 6.2 Regras propostas para validação
+•
+descrição;
 
-- **RN09:** permitir que vendas presenciais sejam registradas sem cadastro de cliente, caso essa seja a prática adotada pelo restaurante.
-- **RN10:** definir quais funcionários podem autorizar cancelamentos, descontos e reembolsos.
-- **RN11:** definir se um pedido pode possuir mais de um pagamento.
-- **RN12:** definir o prazo de armazenamento dos dados e documentos.
-- **RN13:** definir se um cliente pode manter vários endereços cadastrados.
+•
+categoria;
 
-## 7. Informações e dados necessários
+•
+data;
 
-A partir das entrevistas, foram identificados os principais dados que precisam ser organizados no banco.
+•
+valor;
 
-| Entidade | Principais informações |
-|---|---|
-| Cliente | Código, nome, telefone e endereço. |
-| Produto | Código, nome, categoria, preço e quantidade disponível. |
-| Categoria | Código e nome da categoria. |
-| Pedido | Número, data, cliente, canal de atendimento, valor e situação. |
-| ItemPedido | Pedido, produto, quantidade e preço unitário praticado. |
-| Pagamento | Código, pedido, valor, forma e situação do pagamento. |
-| Fornecedor | Código, nome e informações de contato. |
-| Compra | Código, fornecedor, data e informações da aquisição. |
-| Despesa | Código, descrição, categoria, data e valor. |
-| Funcionário | Código, nome, cargo e nível de acesso. |
-| Entrega | Código, pedido, endereço e situação da entrega. |
+•
+funcionário responsável.
 
-### 7.1 Campos obrigatórios e opcionais
+O sistema deve permitir comparar vendas, pagamentos e despesas em determinado período.
 
-Para clientes de delivery, são necessários nome, telefone e endereço.
 
-Nos produtos, são importantes nome, preço e quantidade disponível.
 
-Nos pedidos, devem ser registrados os produtos, o valor, a data e a forma de pagamento.
 
-Informações adicionais, como segundo telefone e observações do pedido, podem ser opcionais.
+2. Problemas e necessidades — P1 a P5
 
-### 7.2 Identificadores únicos
+P1 — Acompanhamento dos pedidos de delivery
 
-Cada pedido precisa ter um número próprio. Os produtos e os registros de pagamento também precisam de identificadores diferentes.
+O restaurante precisa acompanhar os pedidos recebidos, preparados e encaminhados para entrega. A falta de organização pode gerar erros, atrasos e retrabalho.
 
-Esses códigos ajudam a localizar informações e evitam confusão entre registros.
+Tabelas relacionadas: PEDIDO, ITEM_PEDIDO, ENTREGA, CLIENTE e FUNCIONARIO.
 
-### 7.3 Histórico de informações
+Consulta que deve existir: pedidos por situação e acompanhamento das entregas.
 
-É necessário preservar informações importantes, mesmo quando ocorrerem alterações.
+P2 — Controle de cancelamentos e reembolsos
 
-Entre os históricos relevantes estão:
+Quando ocorre um pedido incorreto ou item faltante, pode ser necessário cancelar, reembolsar ou preparar novamente o pedido. É necessário preservar o pedido, seus itens, o motivo e os registros financeiros.
 
-- Vendas realizadas;
-- Pagamentos recebidos;
-- Cancelamentos e reembolsos;
-- Preços antigos dos produtos;
-- Alterações de estoque.
+Tabelas relacionadas: PEDIDO, ITEM_PEDIDO e PAGAMENTO.
 
-No caso de cancelamento, devem permanecer registrados o número do pedido, a data, o valor, os produtos, o motivo e as informações de pagamento ou reembolso.
+Consulta que deve existir: pedidos cancelados e respectivos valores financeiros.
 
-## 8. Relacionamentos considerados na modelagem
+P3 — Comparação entre canais de venda
 
-Com base nos processos apresentados, foram identificados os seguintes relacionamentos para o modelo conceitual e lógico:
+O restaurante utiliza atendimento presencial, WhatsApp e aplicativos de delivery. É necessário comparar a quantidade e o valor das vendas por canal.
 
-1. **Cliente e Pedido:** um cliente pode realizar vários pedidos ao longo do tempo.
-2. **Pedido e Produto:** um pedido pode conter vários produtos, e um produto pode aparecer em diferentes pedidos. Esse relacionamento é representado pela entidade associativa ItemPedido.
-3. **Categoria e Produto:** uma categoria pode possuir vários produtos.
-4. **Fornecedor e Produto:** um fornecedor pode fornecer vários produtos, e um produto pode ser adquirido de diferentes fornecedores.
-5. **Fornecedor e Compra:** uma compra está relacionada ao fornecedor correspondente.
-6. **Funcionário e Pedido:** um funcionário pode participar do atendimento de vários pedidos.
-7. **Pedido e Entrega:** uma entrega está relacionada ao pedido correspondente. Pedidos sem entrega podem não possuir registro de entrega.
-8. **Pedido e Pagamento:** os pagamentos devem estar relacionados aos pedidos. A possibilidade de mais de um pagamento por pedido ainda precisa ser definida.
+Tabelas relacionadas: PEDIDO e PAGAMENTO.
 
-Esses relacionamentos representam a proposta de organização dos dados e devem estar de acordo com o DER e o modelo lógico implementados pelo grupo.
+Consulta que deve existir: vendas agrupadas por canal de atendimento.
 
-## 9. Indicadores e consultas gerenciais
+P4 — Organização das informações financeiras
 
-Durante a segunda entrevista, foram identificadas informações importantes para auxiliar a proprietária na administração do restaurante.
+A proprietária precisa acompanhar vendas, pagamentos e despesas por período para conferir os resultados do restaurante.
 
-Os principais indicadores são:
+Tabelas relacionadas: PEDIDO, PAGAMENTO e DESPESA.
 
-- **Vendas mensais:** consultar o total vendido em cada mês.
-- **Despesas mensais:** acompanhar os gastos do estabelecimento.
-- **Comparação entre vendas e despesas:** analisar os resultados financeiros de cada período.
-- **Produtos mais vendidos:** identificar os itens com maior quantidade de vendas.
-- **Estoque baixo:** identificar produtos próximos do limite mínimo.
-- **Pagamentos pendentes:** acompanhar valores que ainda precisam ser regularizados.
-- **Pedidos cancelados:** consultar a quantidade de cancelamentos e os valores envolvidos.
-- **Vendas por canal:** comparar os pedidos recebidos pelo WhatsApp e pelos aplicativos de delivery.
+Consulta que deve existir: comparação entre vendas e despesas por período.
 
-Essas consultas podem auxiliar no planejamento de compras, no acompanhamento financeiro e na identificação de oportunidades de melhoria.
+P5 — Acompanhamento de produtos e estoque
 
-## 10. Segurança e proteção de dados
+O restaurante precisa identificar produtos próximos de acabar, acompanhar o estoque mínimo e consultar as compras realizadas.
 
-O restaurante coleta informações pessoais de clientes, principalmente nome, telefone e endereço, para viabilizar os pedidos e as entregas.
+Tabelas relacionadas: PRODUTO, CATEGORIA, FORNECEDOR, COMPRA e ITEM_COMPRA.
 
-O sistema proposto deve limitar o acesso a essas informações às pessoas que precisam utilizá-las nas atividades do estabelecimento.
+Consulta que deve existir: produtos abaixo do estoque mínimo e produtos mais vendidos.
 
-Também é necessário considerar os princípios da Lei Geral de Proteção de Dados Pessoais (LGPD), especialmente quanto à finalidade da coleta, à utilização adequada e à conservação dos dados pelo período necessário.
 
-As práticas atuais de segurança e os prazos específicos de armazenamento não foram detalhados nas entrevistas e precisam ser definidos pela organização.
 
-## 11. Considerações finais
 
-As duas entrevistas permitiram compreender melhor o funcionamento da Donna Claudia Restaurante e Lanchonete, seus processos de atendimento, controle de estoque, compras, pagamentos e gestão financeira.
+3. Requisitos do sistema
 
-Foi identificado que o estabelecimento já utiliza o Bion Finance para auxiliar na administração, além do WhatsApp e de aplicativos de delivery para receber pedidos.
+3.1 Requisitos funcionais
 
-As principais necessidades levantadas estão relacionadas ao acompanhamento dos pedidos, ao histórico de cancelamentos e reembolsos, à comparação das vendas por canal, ao controle de estoque e à organização das informações financeiras.
+Código
+Requisito
+RF01
+O sistema deve permitir cadastrar clientes com nome, telefone e telefone alternativo.
+RF02
+O sistema deve permitir cadastrar endereços com rua, número, bairro, CEP, complemento e cliente relacionado.
+RF03
+O sistema deve permitir cadastrar categorias de produtos.
+RF04
+O sistema deve permitir cadastrar produtos com nome, descrição, preço, quantidade em estoque, estoque mínimo e categoria.
+RF05
+O sistema deve registrar pedidos com número, data e hora, cliente quando aplicável, funcionário, canal, situação, observação e valor total.
+RF06
+O sistema deve registrar os produtos de cada pedido com quantidade e preço unitário praticado.
+RF07
+O sistema deve registrar pagamentos com pedido, valor, forma de pagamento, situação e data.
+RF08
+O sistema deve registrar entregas com pedido, endereço, situação e horários de saída e conclusão.
+RF09
+O sistema deve cadastrar fornecedores e registrar compras realizadas.
+RF10
+O sistema deve registrar os produtos, as quantidades e os custos unitários de cada compra por meio de ITEM_COMPRA.
+RF11
+O sistema deve registrar despesas com descrição, categoria, data, valor e funcionário responsável.
+RF12
+O sistema deve permitir consultar produtos cuja quantidade esteja abaixo do estoque mínimo.
+RF13
+O sistema deve manter pedidos cancelados com situação, motivo, itens e informações financeiras relacionadas.
+RF14
+O sistema deve permitir consultar vendas, pagamentos, despesas, cancelamentos e vendas por canal.
+RF15
+O sistema deve permitir consultar produtos mais vendidos e pagamentos pendentes.
 
-Com essas informações, foi possível estabelecer uma base para a construção do modelo conceitual, do modelo lógico e da implementação do banco de dados.
 
-As regras e os relacionamentos que não foram confirmados diretamente deverão ser tratados como decisões de modelagem do projeto, e não como procedimentos necessariamente adotados pelo restaurante.
 
-## 12. Utilização de inteligência artificial
 
-O ChatGPT, da OpenAI, foi utilizado como ferramenta de apoio na organização das respostas das entrevistas e na estruturação deste documento.
+3.2 Requisitos não funcionais
 
-A ferramenta auxiliou na organização dos processos de negócio, na elaboração inicial dos requisitos e na identificação de possíveis entidades e relacionamentos para o banco de dados.
+Código
+Requisito
+RNF01
+O sistema deve permitir acesso por computador e dispositivo móvel.
+RNF02
+O sistema deve possuir interface simples e adequada a usuários com diferentes níveis de familiaridade tecnológica.
+RNF03
+O acesso às informações financeiras deve ser controlado conforme as permissões dos usuários.
+RNF04
+O sistema deve considerar aproximadamente dois usuários simultâneos.
+RNF05
+Os dados pessoais dos clientes devem ser tratados conforme os princípios da LGPD.
+RNF06
+O sistema deve permitir atualizar posteriormente informações registradas manualmente durante uma indisponibilidade.
 
-As informações apresentadas foram baseadas nas respostas fornecidas durante as entrevistas. As sugestões de regras e modelagem foram identificadas separadamente para permitir a revisão pelo grupo.
 
-A inteligência artificial foi utilizada como apoio à redação e organização, não como substituta das informações fornecidas pela entrevistada.
+
+
+
+
+
+4. Regras de negócio
+
+4.1 Regras de cadastro e pedidos
+
+•
+RN01 — Dados para delivery: pedidos que exigem entrega devem possuir nome, telefone e endereço do cliente.
+
+•
+RN02 — Pedido presencial: pedidos presenciais podem ser registrados sem cadastro completo de cliente, pois não exigem entrega.
+
+•
+RN03 — Identificação do pedido: cada pedido deve possuir um identificador único e gerado automaticamente.
+
+•
+RN04 — Funcionário responsável: todo pedido deve estar relacionado a um funcionário responsável pelo atendimento ou registro.
+
+•
+RN05 — Itens do pedido: cada item deve estar relacionado a um pedido e a um produto existente.
+
+•
+RN06 — Preço praticado: o preço registrado em ITEM_PEDIDO deve preservar o valor praticado no momento da venda, mesmo que o preço atual do produto seja alterado.
+
+4.2 Regras de estoque e produtos
+
+•
+RN07 — Estoque disponível: o atendimento deve verificar a disponibilidade do produto antes de confirmar o pedido.
+
+•
+RN08 — Estoque mínimo: produtos cuja quantidade seja menor ou igual ao estoque mínimo devem ser identificados para reposição.
+
+•
+RN09 — Categoria: todo produto deve estar relacionado a uma categoria cadastrada.
+
+•
+RN10 — Compra: toda compra deve estar relacionada a um fornecedor existente.
+
+•
+RN11 — Item de compra: cada item de compra deve informar o produto, a quantidade e o custo unitário.
+
+4.3 Regras de pagamento e entrega
+
+•
+RN12 — Formas de pagamento: as formas consideradas são dinheiro, Pix e cartão.
+
+•
+RN13 — Pagamento relacionado: todo pagamento deve estar relacionado a um pedido existente.
+
+•
+RN14 — Pagamentos múltiplos: um pedido pode possuir mais de um registro de pagamento.
+
+•
+RN15 — Entrega: pedidos presenciais não precisam possuir entrega; pedidos de delivery podem possuir uma entrega relacionada.
+
+•
+RN16 — Endereço da entrega: toda entrega deve possuir um endereço de destino cadastrado.
+
+4.4 Regras de cancelamento e histórico
+
+•
+RN17 — Preservação do pedido: pedidos cancelados não devem ser apagados.
+
+•
+RN18 — Motivo do cancelamento: pedidos cancelados devem possuir motivo registrado.
+
+•
+RN19 — Histórico financeiro: os pagamentos relacionados a pedidos cancelados devem permanecer registrados para conferência.
+
+•
+RN20 — Despesas: toda despesa deve possuir descrição, categoria, data, valor e funcionário responsável.
+
+4.5 Regras de segurança
+
+•
+RN21 — Acesso financeiro: informações financeiras devem ser acessadas somente por usuários autorizados.
+
+•
+RN22 — Dados pessoais: nome, telefone e endereço de clientes devem ser utilizados somente para as finalidades do atendimento e da entrega.
+
+
+
+
+5. Entidades necessárias no diagrama atual
+
+O modelo deve utilizar as entidades e tabelas abaixo, sem acrescentar novas entidades nesta etapa.
+
+Entidade/tabela
+Finalidade
+CLIENTE
+Armazenar dados dos clientes.
+ENDERECO
+Armazenar os endereços relacionados aos clientes e às entregas.
+CATEGORIA
+Organizar os produtos por categoria.
+PRODUTO
+Armazenar produtos, preços e informações atuais de estoque.
+PEDIDO
+Armazenar pedidos, canais, situações, valores e responsáveis.
+ITEM_PEDIDO
+Registrar os produtos, quantidades e preços de cada pedido.
+PAGAMENTO
+Registrar valores, formas e situações dos pagamentos.
+ENTREGA
+Registrar situação, endereço e horários das entregas.
+FORNECEDOR
+Armazenar fornecedores.
+COMPRA
+Registrar compras realizadas.
+ITEM_COMPRA
+Registrar produtos, quantidades e custos de cada compra.
+FUNCIONARIO
+Armazenar funcionários, cargos e níveis de acesso.
+DESPESA
+Registrar despesas e o funcionário responsável.
+
+
+
+
+5.1 Relacionamentos necessários
+
+•
+CLIENTE relaciona-se com PEDIDO.
+
+•
+CLIENTE relaciona-se com ENDERECO.
+
+•
+PEDIDO relaciona-se com ITEM_PEDIDO.
+
+•
+PRODUTO relaciona-se com ITEM_PEDIDO.
+
+•
+CATEGORIA relaciona-se com PRODUTO.
+
+•
+FORNECEDOR relaciona-se com COMPRA.
+
+•
+COMPRA relaciona-se com ITEM_COMPRA.
+
+•
+PRODUTO relaciona-se com ITEM_COMPRA.
+
+•
+FUNCIONARIO relaciona-se com PEDIDO.
+
+•
+FUNCIONARIO relaciona-se com DESPESA.
+
+•
+PEDIDO relaciona-se com PAGAMENTO.
+
+•
+PEDIDO relaciona-se com ENTREGA.
+
+•
+ENDERECO relaciona-se com ENTREGA.
+
+
+
+
+6. Decisões de modelagem
+
+6.1 Pagamentos
+
+Foi adotada a decisão de que um pedido pode possuir mais de um pagamento. Portanto:
+
+•
+PAGAMENTO.id_pedido não deve ser UNIQUE;
+
+•
+a relação entre PEDIDO e PAGAMENTO é 1:N;
+
+•
+o pagamento possui identificador próprio;
+
+•
+pagamentos pendentes e registros financeiros relacionados ao pedido podem ser consultados.
+
+6.2 Pedidos presenciais
+
+Foi adotada a decisão de que pedidos presenciais podem ser registrados sem cadastro completo de cliente. Portanto:
+
+•
+PEDIDO.id_cliente pode aceitar NULL;
+
+•
+pedidos de delivery devem possuir os dados necessários para entrega;
+
+•
+pedidos presenciais não precisam possuir registro em ENTREGA.
+
+6.3 Entregas
+
+Foi adotada a decisão de que um pedido pode possuir no máximo uma entrega. Portanto:
+
+•
+ENTREGA.id_pedido deve ser UNIQUE;
+
+•
+a relação entre PEDIDO e ENTREGA é 1:1 quando a entrega existe;
+
+•
+um pedido presencial pode não possuir entrega.
+
+6.4 Endereços
+
+O modelo utiliza ENDERECO como entidade própria. O endereço é associado ao cliente e pode ser utilizado na entrega. A decisão sobre a quantidade de endereços permitidos deve seguir exatamente a cardinalidade já desenhada no DER atual.
+
+6.5 Estoque
+
+O modelo registra somente:
+
+•
+quantidade atual;
+
+•
+estoque mínimo;
+
+•
+produtos;
+
+•
+compras e itens de compra.
+
+Não será criada uma tabela de movimentação de estoque nesta versão. A consulta de estoque baixo será feita comparando quantidade_estoque com estoque_minimo em PRODUTO.
+
+6.6 Preços
+
+O modelo mantém:
+
+•
+preço atual em PRODUTO;
+
+•
+preço praticado na venda em ITEM_PEDIDO.
+
+Não será criada uma tabela separada para histórico de alterações de preço. O preço do item preserva o valor aplicado no momento do pedido.
+
+6.7 Cancelamentos e reembolsos
+
+O cancelamento será representado pelo status e pelo motivo registrados em PEDIDO. Os registros financeiros permanecem relacionados em PAGAMENTO.
+
+Não será criada uma entidade separada para reembolso ou estorno nesta versão. O grupo não deve prometer no README um detalhamento de reembolso que não possa ser armazenado pelas tabelas atuais.
+
+
+
+
+7. Processos que não fazem parte desta versão
+
+Para manter a compatibilidade com o diagrama atual, não serão modelados nesta entrega:
+
+•
+integração automática com WhatsApp ou aplicativos de delivery;
+
+•
+controle de entregadores próprios;
+
+•
+programa de fidelidade;
+
+•
+cupons e descontos detalhados;
+
+•
+taxas dos aplicativos;
+
+•
+histórico detalhado de movimentações de estoque;
+
+•
+histórico separado de alterações de preço;
+
+•
+tabela própria de reembolso ou estorno;
+
+•
+controle de pedido substituto;
+
+•
+emissão fiscal integrada.
+
+Esses processos podem existir na organização ou ser executados por sistemas externos, mas não fazem parte do escopo do banco de dados desta entrega.
+
+
+
+
+8. Consultas que o SQL deverá possuir
+
+Código
+Consulta
+Problema atendido
+G01
+Total de vendas por período
+P4
+G02
+Total de despesas por período
+P4
+G03
+Produtos abaixo do estoque mínimo
+P5
+G04
+Produtos mais vendidos
+P5
+G05
+Vendas por canal de atendimento
+P3
+G06
+Pedidos cancelados e valores relacionados
+P2
+G07
+Pagamentos por forma de pagamento
+P4
+G08
+Pagamentos pendentes
+P4
+G09
+Compras por fornecedor e produto
+P5
+G10
+Clientes sem pedidos
+Análise cadastral
+G11
+Pedidos e situações de entrega
+P1
+G12
+Quantidade de pedidos por situação
+P1
+G13
+Comparação entre vendas e despesas
+P4
+
+
+
+
+Além das consultas gerenciais, o script deve possuir consultas de auditoria identificadas como A01, A02 etc., verificando as regras e a integridade dos dados.
+
+
+
+
+9. Resultado esperado
+
+Depois da aprovação deste documento, os integrantes devem utilizá-lo como base única para:
+
+1.
+finalizar o DER conceitual;
+
+2.
+finalizar o modelo lógico;
+
+3.
+escrever o script SQL;
+
+4.
+atualizar o dicionário de dados;
+
+5.
+criar a massa fictícia;
+
+6.
+atualizar o README;
+
+7.
+preparar a apresentação.
+
+Nenhum desses artefatos deve criar tabelas, campos, relacionamentos ou regras que não estejam definidos nesta base ou que não sejam aprovados posteriormente pelo grupo.
+
