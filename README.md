@@ -463,6 +463,5 @@ A massa cobre as situações reais: 850 pedidos concluídos, 30 cancelados, 10 e
 
 ---
 
-## 7. Apresentação Corporativa Final
-[Acessar Slides](./docs/apresentacao.pdf)
+
 
