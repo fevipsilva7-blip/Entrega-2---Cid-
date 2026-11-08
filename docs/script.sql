@@ -4350,7 +4350,7 @@ DELETE FROM CLIENTE
 -- P5: Acompanhamento dos produtos e do estoque.
 
 -- G01 - Quais produtos estao abaixo do estoque minimo?
--- Atende: P5 (produtos e estoque) | KPI05 (estoque baixo).
+-- Atende: P5 (produtos e estoque) | KPI 1 (estoque baixo).
 SELECT p.id_produto, p.nome_produto, c.nome_categoria,
        p.quantidade_estoque, p.estoque_minimo,
        p.estoque_minimo - p.quantidade_estoque AS unidades_para_repor
@@ -4359,14 +4359,14 @@ WHERE p.quantidade_estoque < p.estoque_minimo
 ORDER BY unidades_para_repor DESC, p.nome_produto;
 
 -- G02 - Quanto a organizacao faturou por mes com pedidos concluidos?
--- Atende: P4 (informacoes financeiras) | KPI01 (faturamento mensal).
+-- Atende: P4 (informacoes financeiras) | KPI 2 (faturamento mensal).
 SELECT DATE_FORMAT(data_hora, '%Y-%m') AS mes,
        COUNT(*) AS pedidos_concluidos, ROUND(SUM(valor_total),2) AS faturamento
 FROM PEDIDO WHERE status='Concluido'
 GROUP BY DATE_FORMAT(data_hora, '%Y-%m') ORDER BY mes;
 
 -- G03 - Quantos pedidos foram concluidos e qual o ticket medio mensal?
--- Atende: P4 (informacoes financeiras) | KPI02, KPI03.
+-- Atende: P4 (informacoes financeiras) | KPI 3 (pedidos concluidos e ticket medio).
 SELECT DATE_FORMAT(data_hora, '%Y-%m') AS mes,
        COUNT(*) AS pedidos_concluidos,
        ROUND(AVG(valor_total),2) AS ticket_medio
@@ -4374,7 +4374,7 @@ FROM PEDIDO WHERE status='Concluido'
 GROUP BY DATE_FORMAT(data_hora, '%Y-%m') ORDER BY mes;
 
 -- G04 - Qual a taxa de cancelamento por mes?
--- Atende: P2 (cancelamentos e reembolsos) | KPI04 (taxa de cancelamento).
+-- Atende: P2 (cancelamentos e reembolsos) | KPI 4 (taxa de cancelamento).
 SELECT DATE_FORMAT(data_hora, '%Y-%m') AS mes, COUNT(*) AS pedidos_total,
        SUM(CASE WHEN status='Cancelado' THEN 1 ELSE 0 END) AS cancelados,
        ROUND(100.0 * SUM(CASE WHEN status='Cancelado' THEN 1 ELSE 0 END)
@@ -4382,7 +4382,7 @@ SELECT DATE_FORMAT(data_hora, '%Y-%m') AS mes, COUNT(*) AS pedidos_total,
 FROM PEDIDO GROUP BY DATE_FORMAT(data_hora, '%Y-%m') ORDER BY mes;
 
 -- G05 - Quais os dez produtos mais vendidos em quantidade e faturamento?
--- Atende: P5 (produtos e estoque) | KPI06 (produtos mais vendidos).
+-- Atende: P5 (produtos e estoque) | KPI 5 (produtos mais vendidos).
 SELECT pr.id_produto, pr.nome_produto,
        SUM(ip.quantidade) AS unidades_vendidas,
        ROUND(SUM(ip.quantidade * ip.preco_unitario),2) AS faturamento_itens
@@ -4394,14 +4394,14 @@ GROUP BY pr.id_produto, pr.nome_produto
 ORDER BY unidades_vendidas DESC, faturamento_itens DESC LIMIT 10;
 
 -- G06 - Qual canal de atendimento recebe mais pedidos e gera mais receita?
--- Atende: P3 (comparacao entre canais) | KPI07 (vendas por canal).
+-- Atende: P3 (comparacao entre canais) | KPI 6 (vendas por canal).
 SELECT canal_atendimento, COUNT(*) AS pedidos_concluidos,
        ROUND(SUM(valor_total),2) AS faturamento
 FROM PEDIDO WHERE status='Concluido'
 GROUP BY canal_atendimento ORDER BY faturamento DESC;
 
 -- G07 - Quanto foi recebido por forma de pagamento a cada mes?
--- Atende: P4 (informacoes financeiras) | KPI08 (arrecadacao por forma).
+-- Atende: P4 (informacoes financeiras) | KPI 7 (arrecadacao por forma de pagamento).
 SELECT DATE_FORMAT(pg.data_hora, '%Y-%m') AS mes, pg.forma_pagamento,
        COUNT(*) AS transacoes_pagas, ROUND(SUM(pg.valor),2) AS recebido
 FROM PAGAMENTO pg WHERE pg.status_pagamento='Pago'
@@ -4409,7 +4409,7 @@ GROUP BY DATE_FORMAT(pg.data_hora, '%Y-%m'), pg.forma_pagamento
 ORDER BY mes, recebido DESC;
 
 -- G08 - Quanto foi adquirido de fornecedores em cada mes?
--- Atende: P5 (produtos e estoque) | KPI09 (compras por fornecedor).
+-- Atende: P5 (produtos e estoque) | KPI 8 (compras por fornecedor).
 SELECT DATE_FORMAT(c.data_compra,'%Y-%m') AS mes,
        COUNT(DISTINCT c.id_compra) AS compras,
        ROUND(SUM(ic.quantidade*ic.custo_unitario),2) AS valor_comprado
@@ -4417,13 +4417,13 @@ FROM COMPRA c JOIN ITEM_COMPRA ic ON ic.id_compra=c.id_compra
 GROUP BY DATE_FORMAT(c.data_compra,'%Y-%m') ORDER BY mes;
 
 -- G09 - Quais clientes estao cadastrados mas nao realizaram pedidos?
--- Atende: indicador complementar de relacionamento com clientes.
+-- Atende: indicador complementar de relacionamento com clientes | KPI 9.
 SELECT c.id_cliente, c.nome, c.telefone
 FROM CLIENTE c LEFT JOIN PEDIDO p ON p.id_cliente=c.id_cliente
 WHERE p.id_pedido IS NULL ORDER BY c.id_cliente;
 
 -- G10 - Quais categorias de despesas geram maiores gastos por mes?
--- Atende: P4 (informacoes financeiras) | KPI10 (despesas).
+-- Atende: P4 (informacoes financeiras) | KPI 10 (despesas por categoria).
 SELECT DATE_FORMAT(data_despesa,'%Y-%m') AS mes,
        categoria, ROUND(SUM(valor),2) AS total_despesas
 FROM DESPESA
@@ -4431,7 +4431,7 @@ GROUP BY DATE_FORMAT(data_despesa,'%Y-%m'), categoria
 ORDER BY mes, total_despesas DESC;
 
 -- G11 - Qual a distribuicao de status das entregas por mes?
--- Atende: P1 (pedidos de delivery) | KPI11 (situacao das entregas).
+-- Atende: P1 (pedidos de delivery) | KPI 11 (situacao das entregas).
 SELECT DATE_FORMAT(p.data_hora,'%Y-%m') AS mes,
        e.status_entrega, COUNT(*) AS total_entregas
 FROM ENTREGA e JOIN PEDIDO p ON p.id_pedido=e.id_pedido
@@ -4439,7 +4439,7 @@ GROUP BY DATE_FORMAT(p.data_hora,'%Y-%m'), e.status_entrega
 ORDER BY mes, e.status_entrega;
 
 -- G12 - Quantos pedidos concluidos cada funcionario atendeu?
--- Atende: P1 (pedidos de delivery) | KPI12 (pedidos por funcionario).
+-- Atende: P1 (pedidos de delivery) | KPI 12 (pedidos por funcionario).
 SELECT f.id_funcionario, f.nome, f.cargo,
        COUNT(p.id_pedido) AS pedidos_concluidos,
        ROUND(COALESCE(SUM(p.valor_total),0),2) AS faturamento_atendido
@@ -4449,7 +4449,7 @@ GROUP BY f.id_funcionario, f.nome, f.cargo
 ORDER BY pedidos_concluidos DESC;
 
 -- G13 - Quantos pedidos concluidos tiveram pagamento em mais de uma forma?
--- Atende: P4 (informacoes financeiras) | KPI13 (pagamentos divididos).
+-- Atende: P4 (informacoes financeiras) | KPI 13 (pagamentos divididos).
 SELECT p.id_pedido, p.valor_total, COUNT(pg.id_pagamento) AS qtd_pagamentos,
        ROUND(SUM(pg.valor),2) AS total_pago
 FROM PEDIDO p JOIN PAGAMENTO pg ON pg.id_pedido=p.id_pedido
@@ -4459,7 +4459,7 @@ HAVING COUNT(pg.id_pagamento) > 1
 ORDER BY p.id_pedido LIMIT 20;
 
 -- G14 - Qual e o saldo simplificado por mes considerando vendas, compras e despesas?
--- Atende: P4 (informacoes financeiras) | KPI14 (saldo demonstrativo).
+-- Atende: P4 (informacoes financeiras) | KPI 14 (saldo demonstrativo).
 -- NOTA: saldo demonstrativo; NAO e lucro contabil nem DRE/CMV, pois
 -- compras de estoque e consumo nao sao necessariamente no mesmo periodo.
 WITH receita AS (
@@ -4485,7 +4485,8 @@ LEFT JOIN desp d ON d.mes=r.mes ORDER BY r.mes;
 
 -- ETAPA 9: CONSULTAS DE AUDITORIA
 -- Interpretacao: 0 linhas significa que a irregularidade nao foi encontrada.
--- As regras RN01 a RN19 abaixo correspondem as validacoes tecnicas do modelo.
+-- As regras RN01 a RN29 correspondem ao levantamento, ao dicionario
+-- de dados e as validacoes tecnicas do modelo.
 
 -- A01 - Existe motivo de cancelamento em pedido que NAO esta cancelado?
 -- Verifica: RN01 (motivo_cancelamento so pode existir se Cancelado).
