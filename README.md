@@ -236,6 +236,7 @@ Com isso, todas as 13 tabelas estão na 3FN.
 - **KPI 15 — Estornos:** acompanha os valores estornados em pedidos cancelados.
 
 #### Tabela de Rastreabilidade
+#### Tabela de Rastreabilidade
 
 | Problema ou KPI | Tabelas envolvidas | Consulta no script |
 | :--- | :--- | :--- |
@@ -244,7 +245,6 @@ Com isso, todas as 13 tabelas estão na 3FN.
 | `P3` — Comparação entre canais de venda | `PEDIDO`, `PAGAMENTO` | `G05, G07` |
 | `P4` — Organização das informações financeiras | `PEDIDO`, `PAGAMENTO`, `DESPESA` | `G01, G02, G08, G10` |
 | `P5` — Acompanhamento dos produtos e do estoque | `PRODUTO`, `CATEGORIA`, `FORNECEDOR`, `COMPRA`, `ITEM_COMPRA` | `G03, G04, G09` |
-`ITEM_PEDIDO`, `DESPESA` | `G04, G09, G10` |
 | `KPI 1` — Faturamento mensal | `PEDIDO` | `G01` |
 | `KPI 2` — Receita após taxas | `PEDIDO` | `G01` |
 | `KPI 3` — Pedidos concluídos por mês | `PEDIDO` | `G02` |
@@ -260,6 +260,7 @@ Com isso, todas as 13 tabelas estão na 3FN.
 | `KPI 13` — Clientes sem compra efetiva | `CLIENTE`, `PEDIDO` | `G11` |
 | `KPI 14` — Pedidos com pagamento dividido | `PAGAMENTO`, `PEDIDO` | `G12` |
 | `KPI 15` — Estornos por cancelamento | `PAGAMENTO`, `PEDIDO` | `G13` |
+
 
 ---
 
