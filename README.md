@@ -405,6 +405,15 @@ As consultas `G01` a `G14` já retornam dados agregados por mês, canal, forma d
 O script SQL completo para criação do banco de dados MySQL, inserção de tabelas, restrições e consultas está localizado em:
 [Acessar Script SQL](./docs/script.sql)
 
+### Validação do script SQL
+
+O script passou por uma validação estrutural em SQLite em memória. Foram verificadas as 13 tabelas, as inserções, as chaves estrangeiras, as restrições `CHECK`, os `JOINs`, os comandos `UPDATE` e `DELETE`, as consultas e as 18 auditorias.
+
+O relatório completo está disponível em [docs/validacao_script.md](./docs/validacao_script.md).
+
+Essa validação é complementar e não substitui a execução no MySQL 8, que é o SGBD definido para o projeto.
+
+
 
 ---
 
