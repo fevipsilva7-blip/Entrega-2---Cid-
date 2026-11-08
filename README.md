@@ -334,7 +334,8 @@ Algumas regras envolvem mais de uma tabela, e o `CHECK` do MySQL só enxerga a p
 
 #### Informações Estratégicas e Métricas Gerenciais (KPIs)
 
-Cada KPI tem fórmula, período e meta, e é calculado por uma consulta do script. Os valores de referência vêm da massa fictícia, que representa cerca de 10% do volume real (ver seção 4). Por isso as metas usam proporções e comparação entre meses, e não valores absolutos em reais. As metas são **propostas do grupo, a validar com a proprietária.**
+Cada KPI tem fórmula, período e meta, e é calculado por uma consulta do script. Os valores de referência vêm da massa fictícia, que representa cerca de 10% do volume real (ver seção 4). Por isso as metas usam proporções e comparação entre meses, e não valores absolutos em reais. As metas apresentadas são referências acadêmicas propostas pelo grupo, utilizadas apenas para demonstrar a aplicação dos KPIs. Elas não representam metas oficiais da organização.
+
 
 | KPI | Fórmula | Período | Meta proposta | Referência na massa | Consulta |
 |---|---|---|---|---|---|
