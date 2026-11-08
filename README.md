@@ -171,7 +171,7 @@ O modelo lógico foi obtido do DER conceitual aplicando as regras de conversão 
    - `PEDIDO` 1:N `PAGAMENTO` (`PAGAMENTO.id_pedido`)
    - `FORNECEDOR` 1:N `COMPRA` (`COMPRA.id_fornecedor`)
    - `FUNCIONARIO` 1:N `DESPESA` (`DESPESA.id_funcionario`)
-6. **Relacionamentos 1:1:** `PEDIDO` e `ENTREGA` têm relação 1:1: um pedido de delivery gera uma única entrega. Para garantir isso, a FK `ENTREGA.id_pedido` recebe a restrição `UNIQUE`. `A coluna `ENTREGA.id_pedido` possui `UNIQUE`, garantindo no máximo uma entrega por pedido.` Já `PEDIDO` e `PAGAMENTO` são **1:N**, e não 1:1, porque um pedido pode ser pago em mais de uma transação (RF05 e KPI 14, pedidos com pagamento dividido) e pode ter pagamento reembolsado (KPI 15). Por isso `PAGAMENTO.id_pedido` não tem `UNIQUE`.
+A coluna `ENTREGA.id_pedido` possui `UNIQUE`, garantindo no máximo uma entrega por pedido. Já `PEDIDO` e `PAGAMENTO` são **1:N**, e não 1:1, porque um pedido pode ser pago em mais de uma transação (RF05 e KPI 13, pedidos com pagamento dividido) e pode ter pagamento estornado (auditoria A16). Por isso `PAGAMENTO.id_pedido` não tem `UNIQUE`.
 
 ---
 
@@ -220,7 +220,7 @@ Na 1FN, todo atributo tem um único valor atômico e não há grupos repetidos. 
 
 - **Itens de pedido e de compra:** Em vez de guardar a lista de produtos em uma coluna do pedido ou da compra, cada produto ocupa uma linha própria em `ITEM_PEDIDO` ou `ITEM_COMPRA`.
 - **Endereço:** Os dados de endereço foram separados em colunas individuais (`rua`, `numero`, `bairro`, `cep` e `complemento`), e como um cliente pode ter mais de um, eles ficam em uma tabela própria (`ENDERECO`).
-- **Telefones de `CLIENTE`:** A tabela tem `telefone` e `telefone_2`. Cada coluna guarda um único valor, mas estritamente são dois campos do mesmo tipo. A decisão proposta é mantê-los, porque o modelo prevê apenas um telefone principal e um alternativo, e nenhum requisito ou KPI do relatório exige consultar todos os telefones de um cliente. `O modelo mantém `telefone` e `telefone_2` na tabela `CLIENTE`, conforme o diagrama e o SQL.`
+- **Telefones de `CLIENTE`:** A tabela tem `telefone` e `telefone_2`. O modelo mantém os dois campos na tabela `CLIENTE`, conforme o diagrama e o SQL.
 
 #### 2ª Forma Normal (2FN)
 
