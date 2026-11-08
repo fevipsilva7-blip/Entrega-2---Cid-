@@ -24,7 +24,7 @@
 - Nome e natureza da organização: Donna Claudia Restaurante e Lanchonete (CNPJ: 36.276.829/0001-69). Trata-se de uma empresa privada comercial com fins lucrativos do ramo alimentício.
 - Contexto e porte: O restaurante está em operação há aproximadamente 2 anos e conta atualmente com 5 funcionários. Atende um volume médio de cerca de 3.000 clientes por mês (aproximadamente 750 pedidos/atendimentos por semana), operando com vendas presenciais, lanches, refeições e forte fluxo via WhatsApp e aplicativos de delivery.
 - **Problemas e necessidades identificados:**
-- - `P1`: **Acompanhamento dos pedidos de delivery:** dificuldade para acompanhar o recebimento, a preparação e o encaminhamento dos pedidos realizados por WhatsApp e aplicativos de delivery.
+- `P1`: **Acompanhamento dos pedidos de delivery:** dificuldade para acompanhar o recebimento, a preparação e o encaminhamento dos pedidos realizados por WhatsApp e aplicativos de delivery.
 
 - `P2`: **Controle de cancelamentos e reembolsos:** necessidade de manter o histórico de pedidos cancelados, motivos, itens e informações financeiras relacionadas.
 
@@ -51,7 +51,7 @@
 - **Autorização:** A entrevistada autorizou a utilização de seu nome completo no trabalho.
 - **Objetivo:** Levantar informações sobre os processos administrativos e operacionais, identificar necessidades e coletar requisitos para a modelagem do banco de dados.
 - **Principais assuntos abordados:** Gestão de pedidos, delivery, cadastro de clientes, controle de estoque, compras, pagamentos, cancelamentos, reembolsos e despesas.
-- **Comprovação:** `imagem.entrevista.png`.
+- **Comprovação:** A entrevista foi registrada no levantamento. A fotografia da entrevista não foi publicada no repositório por motivo de privacidade da entrevistada.
 - **Levantamento completo:** O detalhamento das respostas, processos, requisitos e regras de negócio está disponível no documento. [Acessar o Levantamento](./Levantamento/levantamento.md)
 
 
@@ -112,7 +112,7 @@ O modelo lógico foi obtido do DER conceitual aplicando as regras de conversão 
 
 1. **Entidades → Tabelas:** Cada entidade do modelo conceitual (`CLIENTE`, `ENDERECO`, `PRODUTO`, `CATEGORIA`, `PEDIDO`, `PAGAMENTO`, `ENTREGA`, `FORNECEDOR`, `COMPRA`, `DESPESA` e `FUNCIONARIO`) foi convertida em uma tabela relacional, com uma chave primária inteira própria (`id_<entidade>`).
 2. **Atributos → Colunas:** Cada atributo virou uma coluna com tipo SQL, conforme o modelo lógico e o script. Os campos monetários usam `DECIMAL(10,2)`. O brModelo não oferece esse tipo e mostra `FLOAT` no diagrama, por isso o dicionário de dados e o script SQL são a referência dos tipos.
-3. **Atributo composto e multivalorado → Tabela própria:** O endereço do cliente (rua, número, bairro, CEP e complemento) é composto, e um cliente pode ter mais de um endereço de entrega. Por isso ele virou a tabela `ENDERECO`, com FK para `CLIENTE`. `[VALIDAR COM O DER CONCEITUAL: confirmar que ENDERECO é tratado assim no modelo conceitual]`
+3. **Atributo composto e multivalorado → Tabela própria:** O endereço do cliente (rua, número, bairro, CEP e complemento) é composto, e um cliente pode ter mais de um endereço de entrega. Por isso ele virou a tabela `ENDERECO`, com FK para `CLIENTE`. `A entidade `ENDERECO` está representada no DER conceitual e foi convertida para a tabela `ENDERECO`.`
 4. **Relacionamentos N:N → Tabelas associativas:** Dois relacionamentos N:N foram convertidos em tabelas associativas, cada uma com os atributos próprios da relação:
    - `PEDIDO` N:N `PRODUTO` → `ITEM_PEDIDO` (`quantidade` e `preco_unitario`, o preço praticado na venda).
    - `COMPRA` N:N `PRODUTO` → `ITEM_COMPRA` (`quantidade` e `custo_unitario`, o custo pago na compra).
@@ -127,7 +127,7 @@ O modelo lógico foi obtido do DER conceitual aplicando as regras de conversão 
    - `PEDIDO` 1:N `PAGAMENTO` (`PAGAMENTO.id_pedido`)
    - `FORNECEDOR` 1:N `COMPRA` (`COMPRA.id_fornecedor`)
    - `FUNCIONARIO` 1:N `DESPESA` (`DESPESA.id_funcionario`)
-6. **Relacionamentos 1:1:** `PEDIDO` e `ENTREGA` têm relação 1:1: um pedido de delivery gera uma única entrega. Para garantir isso, a FK `ENTREGA.id_pedido` recebe a restrição `UNIQUE`. `[VALIDAR NO SCRIPT SQL: confirmar o UNIQUE em ENTREGA.id_pedido]` Já `PEDIDO` e `PAGAMENTO` são **1:N**, e não 1:1, porque um pedido pode ser pago em mais de uma transação (RF05 e KPI 14, pedidos com pagamento dividido) e pode ter pagamento reembolsado (KPI 15). Por isso `PAGAMENTO.id_pedido` não tem `UNIQUE`.
+6. **Relacionamentos 1:1:** `PEDIDO` e `ENTREGA` têm relação 1:1: um pedido de delivery gera uma única entrega. Para garantir isso, a FK `ENTREGA.id_pedido` recebe a restrição `UNIQUE`. `A coluna `ENTREGA.id_pedido` possui `UNIQUE`, garantindo no máximo uma entrega por pedido.` Já `PEDIDO` e `PAGAMENTO` são **1:N**, e não 1:1, porque um pedido pode ser pago em mais de uma transação (RF05 e KPI 14, pedidos com pagamento dividido) e pode ter pagamento reembolsado (KPI 15). Por isso `PAGAMENTO.id_pedido` não tem `UNIQUE`.
 
 ---
 
@@ -161,10 +161,10 @@ As tabelas associativas usam **PK composta**, formada pelas duas FKs. Isso ident
 
 As chaves estrangeiras representam os relacionamentos do modelo e garantem a **integridade referencial**: o banco recusa um pedido de cliente inexistente, um item de produto removido ou uma entrega sem endereço. Algumas decisões merecem destaque:
 
-- **`PEDIDO.id_cliente` é opcional.** A `RN01` exige dados do cliente apenas para pedidos com entrega; pedidos presenciais podem ser registrados sem cliente. `[VALIDAR NO SCRIPT SQL: confirmar que a coluna aceita NULL]`
+- **`PEDIDO.id_cliente` é opcional.** A `RN01` exige dados do cliente apenas para pedidos com entrega; pedidos presenciais podem ser registrados sem cliente. `A coluna `PEDIDO.id_cliente` aceita `NULL`, pois pedidos presenciais podem ser registrados sem cliente.`
 - **`ENTREGA.id_endereco` é obrigatória.** Uma entrega sem endereço de destino não pode ser realizada (`RN01`).
 - **`PAGAMENTO.id_pedido` aponta para o pedido, e não o contrário.** Assim um mesmo pedido pode ter vários pagamentos, o que atende o KPI 14.
-- **As FKs não usam exclusão em cascata.** Pedidos cancelados e seus registros financeiros devem ser preservados (`RN03`), então não se apaga um registro que ainda é referenciado. `[VALIDAR NO SCRIPT SQL: ON DELETE/ON UPDATE]`
+- **As FKs não usam exclusão em cascata.** Pedidos cancelados e seus registros financeiros devem ser preservados (`RN03`), então não se apaga um registro que ainda é referenciado. `As FKs não utilizam exclusão em cascata, preservando o histórico de pedidos e pagamentos.`
 
 ---
 
@@ -176,7 +176,7 @@ Na 1FN, todo atributo tem um único valor atômico e não há grupos repetidos. 
 
 - **Itens de pedido e de compra:** Em vez de guardar a lista de produtos em uma coluna do pedido ou da compra, cada produto ocupa uma linha própria em `ITEM_PEDIDO` ou `ITEM_COMPRA`.
 - **Endereço:** Os dados de endereço foram separados em colunas individuais (`rua`, `numero`, `bairro`, `cep` e `complemento`), e como um cliente pode ter mais de um, eles ficam em uma tabela própria (`ENDERECO`).
-- **Telefones de `CLIENTE`:** A tabela tem `telefone` e `telefone_2`. Cada coluna guarda um único valor, mas estritamente são dois campos do mesmo tipo. A decisão proposta é mantê-los, porque o modelo prevê apenas um telefone principal e um alternativo, e nenhum requisito ou KPI do relatório exige consultar todos os telefones de um cliente. `[VALIDAR COM O GRUPO: manter os dois campos ou criar uma tabela TELEFONE]`
+- **Telefones de `CLIENTE`:** A tabela tem `telefone` e `telefone_2`. Cada coluna guarda um único valor, mas estritamente são dois campos do mesmo tipo. A decisão proposta é mantê-los, porque o modelo prevê apenas um telefone principal e um alternativo, e nenhum requisito ou KPI do relatório exige consultar todos os telefones de um cliente. `O modelo mantém `telefone` e `telefone_2` na tabela `CLIENTE`, conforme o diagrama e o SQL.`
 
 #### 2ª Forma Normal (2FN)
 
@@ -201,7 +201,7 @@ A 3FN exige que nenhum atributo não-chave dependa de outro atributo não-chave 
 - **Categoria:** `PRODUTO` guarda apenas `id_categoria`. O nome da categoria fica em `CATEGORIA`, e assim não se repete em cada produto.
 - **Cliente, funcionário e fornecedor:** `PEDIDO`, `COMPRA` e `DESPESA` guardam só as chaves estrangeiras; nome, telefone e cargo ficam nas tabelas de origem.
 - **Endereço de entrega:** `ENTREGA` guarda `id_endereco` e não repete rua, bairro ou CEP.
-- **Dados derivados:** o subtotal de cada item e o total do pedido podem ser calculados a partir de `ITEM_PEDIDO`, então não precisam ser guardados. `[VALIDAR NO SCRIPT SQL: se existir valor_total em PEDIDO (usado nos KPIs 1, 2 e 4), justificar como desnormalização controlada para consulta]`
+- **Dados derivados:** o subtotal de cada item pode ser calculado a partir de `ITEM_PEDIDO`. O campo `PEDIDO.valor_total` é mantido como desnormalização controlada para facilitar consultas gerenciais, e a auditoria `A06` verifica sua correspondência com a soma dos itens.
 
 Com isso, todas as 13 tabelas estão na 3FN.
 
@@ -219,50 +219,47 @@ Com isso, todas as 13 tabelas estão na 3FN.
 ### 1.6 Proposta de Arquitetura Analítica para BI e IA
 
 #### Informações Estratégicas e Métricas Gerenciais (KPIs)
-- **KPI 1 — Faturamento mensal:** acompanha o valor total das vendas concluídas por mês.
-- **KPI 2 — Receita após taxas:** identifica quanto a organização recebe após as taxas dos canais de venda.
-- **KPI 3 — Pedidos concluídos:** acompanha a quantidade de pedidos concluídos mensalmente.
-- **KPI 4 — Ticket médio:** calcula o valor médio dos pedidos concluídos.
-- **KPI 5 — Estoque baixo:** identifica produtos abaixo do estoque mínimo.
-- **KPI 6 — Produtos mais vendidos:** identifica os produtos com maior volume de vendas.
-- **KPI 7 — Vendas por canal:** compara o faturamento e as taxas dos diferentes canais.
-- **KPI 8 — Taxa de cancelamento:** acompanha o percentual de pedidos cancelados.
-- **KPI 9 — Arrecadação por pagamento:** compara os valores recebidos por forma de pagamento.
-- **KPI 10 — Pedidos em aberto:** identifica pedidos que ainda possuem pagamentos pendentes.
-- **KPI 11 — Margem por produto:** calcula a margem bruta gerada pelos produtos.
-- **KPI 12 — Resultado operacional:** estima o resultado após custos, taxas e despesas.
-- **KPI 13 — Clientes sem compra:** identifica clientes cadastrados sem pedidos concluídos.
-- **KPI 14 — Pagamentos divididos:** identifica pedidos pagos por mais de uma transação.
-- **KPI 15 — Estornos:** acompanha os valores estornados em pedidos cancelados.
+
+- **KPI 1 — Estoque baixo:** identifica produtos cuja quantidade está abaixo do estoque mínimo (`G01`).
+- **KPI 2 — Faturamento mensal:** acompanha o valor das vendas concluídas por mês (`G02`).
+- **KPI 3 — Pedidos concluídos e ticket médio:** acompanha a quantidade de pedidos concluídos e o valor médio mensal (`G03`).
+- **KPI 4 — Taxa de cancelamento:** acompanha o percentual de pedidos cancelados (`G04`).
+- **KPI 5 — Produtos mais vendidos:** identifica os produtos com maior quantidade vendida (`G05`).
+- **KPI 6 — Vendas por canal:** compara pedidos e faturamento por canal (`G06`).
+- **KPI 7 — Arrecadação por forma de pagamento:** compara valores pagos por forma (`G07`).
+- **KPI 8 — Compras por fornecedor:** acompanha valores adquiridos por mês (`G08`).
+- **KPI 9 — Clientes sem pedido:** identifica clientes cadastrados sem pedidos (`G09`).
+- **KPI 10 — Despesas por categoria:** acompanha os gastos por categoria e mês (`G10`).
+- **KPI 11 — Situação das entregas:** acompanha entregas por situação e período (`G11`).
+- **KPI 12 — Pedidos por funcionário:** acompanha pedidos concluídos e faturamento por funcionário (`G12`).
+- **KPI 13 — Pagamentos divididos:** identifica pedidos concluídos com mais de um pagamento (`G13`).
+- **KPI 14 — Saldo demonstrativo:** compara vendas, compras e despesas por mês (`G14`).
+
+A análise de estornos é realizada pela auditoria `A16`, que identifica estornos associados a pedidos que não estão cancelados. Receita após taxas e margem contábil não são apresentados como KPIs, pois o modelo atual não possui dados de taxas nem metodologia contábil de custo médio.
 
 #### Tabela de Rastreabilidade
 
 | Problema ou KPI | Tabelas envolvidas | Consulta no script |
 | :--- | :--- | :--- |
 | `P1` — Acompanhamento dos pedidos de delivery | `PEDIDO`, `ITEM_PEDIDO`, `ENTREGA`, `CLIENTE`, `FUNCIONARIO` | `G11, G12` |
-| `P2` — Controle de cancelamentos e reembolsos | `PEDIDO`, `ITEM_PEDIDO`, `PAGAMENTO` | `G06, G13` |
-| `P3` — Comparação entre canais de venda | `PEDIDO`, `PAGAMENTO` | `G05, G07` |
-| `P4` — Organização das informações financeiras | `PEDIDO`, `PAGAMENTO`, `DESPESA` | `G01, G02, G08, G10` |
-| `P5` — Acompanhamento dos produtos e do estoque | `PRODUTO`, `CATEGORIA`, `FORNECEDOR`, `COMPRA`, `ITEM_COMPRA` | `G03, G04, G09` |
-| `KPI 1` — Faturamento mensal | `PEDIDO` | `G01` |
-| `KPI 2` — Receita após taxas | `PEDIDO` | `G01` |
-| `KPI 3` — Pedidos concluídos por mês | `PEDIDO` | `G02` |
-| `KPI 4` — Ticket médio | `PEDIDO` | `G02` |
-| `KPI 5` — Produtos abaixo do estoque mínimo | `PRODUTO` | `G03` |
-| `KPI 6` — Produtos mais vendidos | `PRODUTO`, `PEDIDO`, `ITEM_PEDIDO` | `G04` |
-| `KPI 7` — Vendas por canal | `PEDIDO` | `G05` |
-| `KPI 8` — Taxa de cancelamento | `PEDIDO` | `G06` |
-| `KPI 9` — Arrecadação por forma de pagamento | `PAGAMENTO` | `G07` |
-| `KPI 10` — Pedidos em aberto | `PEDIDO`, `PAGAMENTO` | `G08` |
-| `KPI 11` — Margem por produto | `PRODUTO`, `PEDIDO`, `ITEM_PEDIDO` | `G09` |
-| `KPI 12` — Resultado operacional estimado | `PRODUTO`, `PEDIDO`, `ITEM_PEDIDO`, `DESPESA` | `G10` |
-| `KPI 13` — Clientes sem compra efetiva | `CLIENTE`, `PEDIDO` | `G11` |
-| `KPI 14` — Pedidos com pagamento dividido | `PAGAMENTO`, `PEDIDO` | `G12` |
-| `KPI 15` — Estornos por cancelamento | `PAGAMENTO`, `PEDIDO` | `G13` |
-
-
----
-
+| `P2` — Controle de cancelamentos e reembolsos | `PEDIDO`, `ITEM_PEDIDO`, `PAGAMENTO` | `G04, A16` |
+| `P3` — Comparação entre canais de venda | `PEDIDO`, `PAGAMENTO` | `G06, G13` |
+| `P4` — Organização das informações financeiras | `PEDIDO`, `PAGAMENTO`, `COMPRA`, `ITEM_COMPRA`, `DESPESA` | `G02, G03, G07, G10, G14` |
+| `P5` — Acompanhamento dos produtos e do estoque | `PRODUTO`, `CATEGORIA`, `FORNECEDOR`, `COMPRA`, `ITEM_COMPRA` | `G01, G05, G08` |
+| `KPI 1` — Estoque baixo | `PRODUTO`, `CATEGORIA` | `G01` |
+| `KPI 2` — Faturamento mensal | `PEDIDO` | `G02` |
+| `KPI 3` — Pedidos concluídos e ticket médio | `PEDIDO` | `G03` |
+| `KPI 4` — Taxa de cancelamento | `PEDIDO` | `G04` |
+| `KPI 5` — Produtos mais vendidos | `PRODUTO`, `PEDIDO`, `ITEM_PEDIDO` | `G05` |
+| `KPI 6` — Vendas por canal | `PEDIDO` | `G06` |
+| `KPI 7` — Arrecadação por forma de pagamento | `PAGAMENTO` | `G07` |
+| `KPI 8` — Compras por fornecedor | `FORNECEDOR`, `COMPRA`, `ITEM_COMPRA`, `PRODUTO` | `G08` |
+| `KPI 9` — Clientes sem pedido | `CLIENTE`, `PEDIDO` | `G09` |
+| `KPI 10` — Despesas por categoria | `DESPESA` | `G10` |
+| `KPI 11` — Situação das entregas | `PEDIDO`, `ENTREGA` | `G11` |
+| `KPI 12` — Pedidos por funcionário | `FUNCIONARIO`, `PEDIDO` | `G12` |
+| `KPI 13` — Pagamentos divididos | `PAGAMENTO`, `PEDIDO` | `G13` |
+| `KPI 14` — Saldo demonstrativo | `PEDIDO`, `COMPRA`, `ITEM_COMPRA`, `DESPESA` | `G14` |
 ## 2. Modelo Lógico Relacional
 
 - **Ferramenta utilizada:** brModelo (modelo lógico).
@@ -283,7 +280,7 @@ O script SQL completo para criação do banco de dados MySQL, inserção de tabe
 
 A massa de dados foi elaborada de forma fictícia e coerente com a escala da organização (simulando proporções reais de seus 3.000 atendimentos mensais) para testar o comportamento do sistema sob cenários operacionais variados.
 
-Os comandos INSERT INTO da massa de dados estão integrados ao script principal. Acesse o arquivo docs/script.sql para consultar a criação do banco, as tabelas, as restrições, a massa fictícia e as consultas SQL.
+Os comandos `INSERT INTO` da massa de dados estão integrados ao script principal. Acesse o arquivo [docs/script.sql](./docs/script.sql) para consultar a criação do banco, as tabelas, as restrições, a massa fictícia e as consultas SQL.
 
 
 
@@ -300,8 +297,8 @@ Os comandos INSERT INTO da massa de dados estão integrados ao script principal.
 | :--- | :--- |
 | **Ferramenta e etapa** | ChatGPT (OpenAI) / Gemini (Google) utilizado nas etapas de redação do relatório técnico, estruturação da massa de dados, auxílio na escrita das queries SQL, pesquisa sobre KPIs de restaurantes e criação de slides. |
 | **Motivação** | Agilizar a estruturação do texto dentro do padrão do esqueleto e acelerar a geração de inserts sintéticos e coerentes para a massa de dados. |
-| **Prompt(s) utilizados** | *"Gere 20 inserts SQL fictícios para a tabela PEDIDO considerando canais como WhatsApp e Delivery, status variados e mantendo coerência com dados de clientes.", "Me envie KPIs que são usadas em resturantes (vendas, financeiros, estoque, atendimentos e clientes)* |
-| **Resposta recebida** | Códigos `INSERT INTO` contendo dados sintéticos para popular o banco. 29 KPIs utilizadas em restaurantes.|
+| **Prompt(s) utilizados** | *"Gere 20 inserts SQL fictícios para a tabela PEDIDO considerando canais como WhatsApp e Delivery, status variados e mantendo coerência com dados de clientes.", "Me envie KPIs que são utilizados em restaurantes (vendas, financeiros, estoque, atendimentos e clientes)* |
+| **Resposta recebida** | Códigos `INSERT INTO` contendo dados sintéticos para popular o banco. 14 KPIs implementados nas consultas G01 a G14.|
 | **Fontes consultadas e verificadas** | Manual de referência do MySQL 8.0 para validação das sintaxes de `CONSTRAINT` e `CHECK`. |
 | **Trechos rejeitados ou corrigidos** | Foram ajustados os tipos de dados monetários para `DECIMAL(10,2)` onde a IA havia sugerido `FLOAT`. |
 | **Justificativa da escolha final** | O uso de `DECIMAL` evita problemas de arredondamento em cálculos financeiros no MySQL. |
