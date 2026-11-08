@@ -85,7 +85,7 @@
 
 ##### Regras de Negócio
 - `RN01`: Para pedidos que exigem entrega, devem ser registrados os dados necessários para localizar e contatar o cliente, incluindo nome, telefone e endereço.
-- `RN02`: O sistema deverá impedir a inclusão de produtos em pedidos quando não houver estoque suficiente. O levantamento confirma o acompanhamento do estoque, mas não confirma essa restrição de venda.
+- `RN02`: O sistema deve impedir a inclusão de produtos em pedidos quando não houver estoque suficiente.
 - `RN03`: Quando um pedido for cancelado, seu registro e as informações relevantes — como número, data, valor, produtos, motivo e registro de pagamento/reembolso — devem ser preservados para consulta histórica.
 - `RN04`: O preço registrado no item do pedido deve preservar o valor praticado no momento da venda, sem ser alterado por futuras mudanças no cadastro do produto.
 - `RN05`: Cada pedido deve possuir um identificador único. A numeração deve ser sequencial e gerada automaticamente pelo sistema.
