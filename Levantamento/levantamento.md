@@ -237,6 +237,19 @@ O restaurante precisa identificar produtos próximos de acabar, acompanhar o est
 - **RN21 — Acesso financeiro:** informações financeiras devem ser acessadas somente por usuários autorizados.
 - **RN22 — Dados pessoais:** nome, telefone e endereço de clientes devem ser utilizados somente para as finalidades do atendimento e da entrega.
 
+
+## 4.6 Regras de integridade dos dados
+
+Regras implementadas no script e conferidas pelas consultas de auditoria. Foram acrescentadas ao levantamento para que README, script e levantamento usem os mesmos códigos.
+
+- **RN23 — Pedido com itens:** todo pedido possui ao menos um item.
+- **RN24 — Valor total do pedido:** `PEDIDO.valor_total` é igual à soma de `quantidade × preco_unitario` dos itens.
+- **RN25 — Pedido concluído quitado:** a soma dos pagamentos `Pago` de um pedido concluído é igual ao seu valor total.
+- **RN26 — Estorno:** apenas pedido cancelado possui pagamento `Estornado`, e pedido cancelado não mantém pagamento `Pago`.
+- **RN27 — Endereço do cliente:** o endereço da entrega pertence ao cliente do pedido.
+- **RN28 — Datas coerentes:** a entrega não ocorre antes da saída, entrega `Entregue` exige data de entrega e o pagamento não é anterior ao pedido.
+- **RN29 — Valores positivos:** preços, custos, valores de pagamento e quantidades são maiores que zero.
+
 ---
 
 # 5. Entidades necessárias no diagrama atual
@@ -355,25 +368,26 @@ Esses processos podem existir na organização ou ser executados por sistemas ex
 
 ---
 
-# 8. Consultas que o SQL deverá possuir
+# 8. Consultas que o SQL possui
 
-| Código | Consulta | Problema atendido |
+| Código | Consulta | Problema ou KPI |
 |---|---|---|
-| G01 | Total de vendas por período | P4 |
-| G02 | Total de despesas por período | P4 |
-| G03 | Produtos abaixo do estoque mínimo | P5 |
-| G04 | Produtos mais vendidos | P5 |
-| G05 | Vendas por canal de atendimento | P3 |
-| G06 | Pedidos cancelados e valores relacionados | P2 |
-| G07 | Pagamentos por forma de pagamento | P4 |
-| G08 | Pagamentos pendentes | P4 |
-| G09 | Compras por fornecedor e produto | P5 |
-| G10 | Clientes sem pedidos | Análise cadastral |
-| G11 | Pedidos e situações de entrega | P1 |
-| G12 | Quantidade de pedidos por situação | P1 |
-| G13 | Comparação entre vendas e despesas | P4 |
+| G01 | Produtos abaixo do estoque mínimo | P5, KPI 1 |
+| G02 | Faturamento mensal | P4, KPI 2 |
+| G03 | Pedidos concluídos e ticket médio mensal | P4, KPI 3 |
+| G04 | Taxa de cancelamento por mês | P2, KPI 4 |
+| G05 | Dez produtos mais vendidos | P5, KPI 5 |
+| G06 | Pedidos e receita por canal de atendimento | P3, KPI 6 |
+| G07 | Recebimentos por forma de pagamento | P4, KPI 7 |
+| G08 | Compras por mês | P5, KPI 8 |
+| G09 | Clientes sem pedidos | KPI 9 |
+| G10 | Despesas por categoria e mês | P4, KPI 10 |
+| G11 | Situação das entregas por mês | P1, KPI 11 |
+| G12 | Pedidos concluídos por funcionário | P1, KPI 12 |
+| G13 | Pedidos com pagamento dividido | P3, KPI 13 |
+| G14 | Saldo demonstrativo mensal | P4, KPI 14 |
 
-Além das consultas gerenciais, o script deve possuir consultas de auditoria identificadas como `A01`, `A02` etc., verificando as regras e a integridade dos dados.
+As consultas de auditoria `A01` a `A18` verificam as regras `RN01` a `RN29`. A correspondência entre cada auditoria e sua regra está no cabeçalho de cada consulta em `docs/script.sql`.
 
 ---
 
