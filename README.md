@@ -236,7 +236,6 @@ Com isso, todas as 13 tabelas estão na 3FN.
 - **KPI 15 — Estornos:** acompanha os valores estornados em pedidos cancelados.
 
 #### Tabela de Rastreabilidade
-#### Tabela de Rastreabilidade
 
 | Problema ou KPI | Tabelas envolvidas | Consulta no script |
 | :--- | :--- | :--- |
