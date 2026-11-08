@@ -448,5 +448,21 @@ A massa cobre as situações reais: 850 pedidos concluídos, 30 cancelados, 10 e
 
 ---
 
+## 6. Uso de Inteligência Artificial
 
+| Item | O que registrar |
+| :--- | :--- |
+| **Ferramenta e etapa** | ChatGPT (OpenAI) / Gemini (Google) utilizado nas etapas de redação do relatório técnico, estruturação da massa de dados, auxílio na escrita das queries SQL, pesquisa sobre KPIs de restaurantes e criação de slides. |
+| **Motivação** | Agilizar a estruturação do texto dentro do padrão do esqueleto e acelerar a geração de inserts sintéticos e coerentes para a massa de dados. |
+| **Prompt(s) utilizados** | *"Gere 20 inserts SQL fictícios para a tabela PEDIDO considerando canais como WhatsApp e Delivery, status variados e mantendo coerência com dados de clientes.", "Me envie KPIs que são utilizados em restaurantes (vendas, financeiros, estoque, atendimentos e clientes)* |
+| **Resposta recebida** | Códigos `INSERT INTO` contendo dados sintéticos para popular o banco. 14 KPIs implementados nas consultas G01 a G14.|
+| **Fontes consultadas e verificadas** | Manual de referência do MySQL 8.0 para validação das sintaxes de `CONSTRAINT` e `CHECK`. |
+| **Trechos rejeitados ou corrigidos** | Foram ajustados os tipos de dados monetários para `DECIMAL(10,2)` onde a IA havia sugerido `FLOAT`. |
+| **Justificativa da escolha final** | O uso de `DECIMAL` evita problemas de arredondamento em cálculos financeiros no MySQL. |
+| **Reflexão crítica** | A IA acelera a escrita repetitiva, mas exige validação rigorosa sobre as restrições relacionais para não gerar inconsistências de chave estrangeira (`FK`) |
+
+---
+
+## 7. Apresentação Corporativa Final
+[Acessar Slides](./docs/apresentacao.pdf)
 
