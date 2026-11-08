@@ -84,25 +84,69 @@
 - `RNF04`: O sistema deve permitir que informações registradas manualmente durante uma indisponibilidade sejam atualizadas posteriormente.
 
 ##### Regras de Negócio
-- `RN01`: Para pedidos que exigem entrega, devem ser registrados os dados necessários para localizar e contatar o cliente, incluindo nome, telefone e endereço.
-- `RN02`: O sistema deve impedir a inclusão de produtos em pedidos quando não houver estoque suficiente.
-- `RN03`: Quando um pedido for cancelado, seu registro e as informações relevantes — como número, data, valor, produtos, motivo e registro de pagamento/reembolso — devem ser preservados para consulta histórica.
-- `RN04`: O preço registrado no item do pedido deve preservar o valor praticado no momento da venda, sem ser alterado por futuras mudanças no cadastro do produto.
-- `RN05`: Cada pedido deve possuir um identificador único. A numeração deve ser sequencial e gerada automaticamente pelo sistema.
 
+Os códigos abaixo são os mesmos do levantamento (`Levantamento/levantamento.md`), do dicionário de dados e das consultas de auditoria do `docs/script.sql`. As regras `RN01` a `RN22` vieram do levantamento com a proprietária; as regras `RN23` a `RN29` formalizam validações de integridade que o script já implementa.
+
+**Cadastro e pedidos**
+- `RN01` — **Dados para delivery:** pedidos que exigem entrega (WhatsApp e aplicativo) devem possuir cliente com nome, telefone e endereço.
+- `RN02` — **Pedido presencial:** pedidos presenciais podem ser registrados sem cadastro completo de cliente (`PEDIDO.id_cliente` aceita `NULL`).
+- `RN03` — **Identificação do pedido:** cada pedido possui identificador único, sequencial e gerado automaticamente.
+- `RN04` — **Funcionário responsável:** todo pedido está relacionado a um funcionário.
+- `RN05` — **Itens do pedido:** cada item pertence a um pedido e a um produto existentes, sem repetir o produto no mesmo pedido.
+- `RN06` — **Preço praticado:** `ITEM_PEDIDO.preco_unitario` preserva o valor da venda, mesmo que o preço atual do produto mude.
+
+**Estoque e compras**
+- `RN07` — **Estoque disponível:** a quantidade em estoque nunca é negativa; o atendimento verifica a disponibilidade antes de confirmar o pedido.
+- `RN08` — **Estoque mínimo:** produtos abaixo do estoque mínimo são identificados para reposição.
+- `RN09` — **Categoria:** todo produto pertence a uma categoria cadastrada.
+- `RN10` — **Compra:** toda compra está relacionada a um fornecedor existente.
+- `RN11` — **Item de compra:** cada compra possui itens com produto, quantidade e custo unitário.
+
+**Pagamento e entrega**
+- `RN12` — **Formas de pagamento:** Pix, cartão e dinheiro.
+- `RN13` — **Pagamento relacionado:** todo pagamento pertence a um pedido existente.
+- `RN14` — **Pagamentos múltiplos:** um pedido pode ter mais de um pagamento.
+- `RN15` — **Entrega:** pedido presencial não possui entrega; pedido de delivery possui no máximo uma.
+- `RN16` — **Endereço da entrega:** toda entrega tem um endereço de destino cadastrado.
+
+**Cancelamento e histórico**
+- `RN17` — **Preservação do pedido:** pedido cancelado não é apagado; muda de situação para `Cancelado`.
+- `RN18` — **Motivo do cancelamento:** o motivo é registrado no pedido cancelado e só existe em pedido cancelado.
+- `RN19` — **Histórico financeiro:** os pagamentos de pedidos cancelados permanecem registrados para conferência.
+- `RN20` — **Despesas:** toda despesa possui descrição, categoria, data, valor e funcionário responsável.
+
+**Segurança**
+- `RN21` — **Acesso financeiro:** informações financeiras só são acessadas por usuários autorizados, conforme `FUNCIONARIO.nivel_acesso`.
+- `RN22` — **Dados pessoais:** nome, telefone e endereço de clientes são usados somente para atendimento e entrega (LGPD).
+
+**Integridade dos dados (implementadas no script)**
+- `RN23` — **Pedido com itens:** todo pedido possui ao menos um item.
+- `RN24` — **Valor total do pedido:** `PEDIDO.valor_total` é igual à soma de `quantidade × preco_unitario` dos itens.
+- `RN25` — **Pedido concluído quitado:** a soma dos pagamentos `Pago` de um pedido concluído é igual ao seu valor total.
+- `RN26` — **Estorno:** apenas pedido cancelado possui pagamento `Estornado`, e pedido cancelado não mantém pagamento `Pago`.
+- `RN27` — **Endereço do cliente:** o endereço da entrega pertence ao cliente do pedido.
+- `RN28` — **Datas coerentes:** a entrega não ocorre antes da saída, entrega `Entregue` exige data de entrega e o pagamento não é anterior ao pedido.
+- `RN29` — **Valores positivos:** preços, custos, valores de pagamento e quantidades são maiores que zero.
+
+**Regras prováveis não incluídas:** descontos e cupons, taxas dos aplicativos, programa de fidelidade e emissão fiscal integrada não entram nesta versão, porque o restaurante os executa em sistemas externos ou ainda não os controla e porque o DER aprovado não possui tabelas para eles (ver seção 7 do levantamento).
 
 #### Notação do DER Conceitual
 - **Ferramenta utilizada:** brModelo.
 - **Link/Imagem do DER:** ![DER Conceitual](./DER%20conceitual/der_conceitual.png)
 
 #### Ajustes do Modelo em Relação à Entrega 1
-| Apontamento da Entrega 1 | Alteração realizada | Justificativa |
+
+A tabela compara o modelo da Entrega 1 com o modelo atual. A coluna da esquerda descreve a lacuna encontrada na revisão.
+
+| Apontamento da correção da E1 | O que mudou no trabalho | Por quê |
 |---|---|---|
-| Ausência de controle dos itens do pedido | Criada a entidade associativa `ITEM_PEDIDO` | Permitir registrar vários produtos no mesmo pedido |
-| Falta de controle de compras | Criadas `COMPRA` e `ITEM_COMPRA` | Registrar produtos adquiridos e seus custos |
-| Falta de acompanhamento de entregas | Criada a entidade `ENTREGA` | Controlar pedidos enviados por delivery |
-
-
+| Produto sem estoque mínimo, o que impedia identificar reposição (P5) | Criada a coluna `PRODUTO.estoque_minimo`, com `CHECK >= 0` | Permite a consulta `G01` (KPI 1) e a auditoria `A02` (`RN07`, `RN08`) |
+| Pedido sem valor total e sem motivo de cancelamento | Criadas `PEDIDO.valor_total` e `PEDIDO.motivo_cancelamento` | O valor total alimenta os KPIs 2, 3, 4 e 6 (`RN24`); o motivo registra o cancelamento (`RN18`, P2) |
+| Entrega sem horários, sem como acompanhar o delivery (P1) | Criadas `ENTREGA.data_hora_saida` e `ENTREGA.data_hora_entrega`, com `CHECK` de ordem cronológica | Permite acompanhar a entrega (`G11`) e auditar as datas (`A12`, `A15`, `RN28`) |
+| `PEDIDO` e `PAGAMENTO` tratados como 1:1, com `UNIQUE` | Relação alterada para 1:N; `PAGAMENTO.id_pedido` não tem `UNIQUE` | Um pedido pode ter pagamento dividido e pagamento estornado (`RN14`, `RN26`, KPI 13) |
+| Valores monetários em `FLOAT` | Todos os campos monetários passaram a `DECIMAL(10,2)` | Evita erro de arredondamento nas somas financeiras (`G02`, `G14`) |
+| Dicionário sem restrições de integridade | Dicionário com colunas de obrigatoriedade, unicidade, valores permitidos e padrão | Documenta o que o script implementa (seção 1.5) |
+| Três problemas declarados (`P1` a `P3`), sem consulta que os responda | Problemas ampliados para `P1` a `P5`, cada um com consultas `G` na tabela de rastreabilidade | Todo problema declarado precisa ser respondido por consulta (seção 1.6) |
 
 ---
 
@@ -209,10 +253,80 @@ Com isso, todas as 13 tabelas estão na 3FN.
 
 ### 1.5 Justificativas Técnicas das Decisões
 
-- **Chaves primárias autoincrementais (`INT AUTO_INCREMENT`):** Utilizadas para identificar unicamente os registros e facilitar os relacionamentos entre tabelas, conforme implementação no script SQL.
-- **Inclusão do atributo `preco_unitario` em `ITEM_PEDIDO`:** Preserva o preço praticado no momento da venda, evitando que alterações futuras no cadastro do produto modifiquem o histórico de pedidos.
-- **Uso de enums e/ou restrições `CHECK`:** Podem ser utilizados para limitar valores de canais, formas de pagamento e status, desde que correspondam às restrições efetivamente implementadas no script SQL.
-- **Manutenção de registros de cancelamentos:** Permite consultar o histórico de pedidos cancelados, seus motivos e os registros financeiros relacionados.
+#### Chaves primárias
+
+As chaves primárias das 11 tabelas de entidade são inteiros substitutos (`INT AUTO_INCREMENT`), explicados na seção 1.3. Em `PEDIDO`, o `AUTO_INCREMENT` implementa a numeração única e sequencial da `RN03`. `ITEM_PEDIDO` e `ITEM_COMPRA` usam chave composta, o que impede o mesmo produto repetido no mesmo pedido ou na mesma compra (`RN05`, `RN11`).
+
+#### Chaves estrangeiras
+
+Todas as FKs usam o comportamento padrão do MySQL (`RESTRICT`), sem exclusão em cascata. O banco recusa apagar um registro que ainda é referenciado, o que preserva pedidos cancelados e seus pagamentos (`RN17`, `RN19`). As principais:
+
+| FK | Relacionamento implementado | Regra |
+|---|---|---|
+| `PEDIDO.id_cliente` (aceita `NULL`) | `CLIENTE` 1:N `PEDIDO` | `RN01`, `RN02` |
+| `PEDIDO.id_funcionario` (`NOT NULL`) | `FUNCIONARIO` 1:N `PEDIDO` | `RN04` |
+| `PRODUTO.id_categoria` (`NOT NULL`) | `CATEGORIA` 1:N `PRODUTO` | `RN09` |
+| `PAGAMENTO.id_pedido` (`NOT NULL`, sem `UNIQUE`) | `PEDIDO` 1:N `PAGAMENTO` | `RN13`, `RN14` |
+| `ENTREGA.id_pedido` (`NOT NULL`, `UNIQUE`) | `PEDIDO` 1:1 `ENTREGA` | `RN15` |
+| `ENTREGA.id_endereco` (`NOT NULL`) | `ENDERECO` 1:N `ENTREGA` | `RN16` |
+| `COMPRA.id_fornecedor` (`NOT NULL`) | `FORNECEDOR` 1:N `COMPRA` | `RN10` |
+| `ITEM_COMPRA` (`id_compra`, `id_produto`) | `COMPRA` N:N `PRODUTO` | `RN11` |
+| `ITEM_PEDIDO` (`id_pedido`, `id_produto`) | `PEDIDO` N:N `PRODUTO` | `RN05` |
+| `DESPESA.id_funcionario` (`NOT NULL`) | `FUNCIONARIO` 1:N `DESPESA` | `RN20` |
+
+#### Restrições aplicadas no banco
+
+| Tabela.coluna | Restrição | Regra | Justificativa |
+|---|---|---|---|
+| `CATEGORIA.nome_categoria` | `NOT NULL`, `UNIQUE` | `RN09` | Evita duas categorias com o mesmo nome |
+| `FORNECEDOR.nome_empresa` | `NOT NULL`, `UNIQUE` | `RN10` | Evita fornecedor cadastrado em duplicidade |
+| `FUNCIONARIO.nivel_acesso` | `CHECK` em (`Proprietária`, `Gerente`, `Atendente`); padrão `Atendente` | `RN21` | O nível define quem acessa informações financeiras; o padrão é o menor privilégio |
+| `CLIENTE.nome`, `CLIENTE.telefone` | `NOT NULL` | `RN01` | Sem nome e telefone não há como contatar o cliente do delivery |
+| `PRODUTO.nome_produto` | `NOT NULL`, `UNIQUE` | `RN09` | Um produto não é cadastrado duas vezes |
+| `PRODUTO.preco` | `CHECK > 0` | `RN29` | Produto sem preço não pode ser vendido |
+| `PRODUTO.quantidade_estoque`, `estoque_minimo` | `CHECK >= 0`; padrão `0` | `RN07`, `RN08` | O estoque nunca fica negativo |
+| `ENDERECO.cep` | `CHECK` com 8 dígitos | `RN16` | Impede CEP inválido no destino da entrega |
+| `ENDERECO.rua`, `numero`, `bairro`, `id_cliente` | `NOT NULL` | `RN01`, `RN16` | Todo endereço é localizável e pertence a um cliente |
+| `PEDIDO.canal_atendimento` | `CHECK` em (`WhatsApp`, `App`, `Presencial`) | `RN01`, `RN02` | Padroniza o canal usado na comparação de vendas (P3) |
+| `PEDIDO.status` | `CHECK` em (`Pendente`, `Em preparo`, `Pronto`, `Em entrega`, `Concluido`, `Cancelado`); padrão `Pendente` | `RN17` | Cancelamento é um status; o registro nunca é apagado |
+| `PEDIDO.valor_total` | `NOT NULL`, `CHECK >= 0`; padrão `0.00` | `RN24` | Valor usado pelos KPIs financeiros |
+| `PEDIDO` (`ck_pedido_motivo`) | `CHECK` (`status = 'Cancelado'` ou `motivo_cancelamento` nulo) | `RN18` | O motivo só existe em pedido cancelado |
+| `PEDIDO` (`ck_pedido_cliente_canal`) | `CHECK` (canal `Presencial` ou `id_cliente` preenchido) | `RN01`, `RN02` | Delivery exige cliente; presencial não |
+| `ITEM_PEDIDO.quantidade`, `preco_unitario` | `CHECK > 0` | `RN05`, `RN06`, `RN29` | O item vendido tem quantidade e preço praticado válidos |
+| `ITEM_COMPRA.quantidade`, `custo_unitario` | `CHECK > 0` | `RN11`, `RN29` | A compra registra o que e quanto foi pago |
+| `PAGAMENTO.forma_pagamento` | `CHECK` em (`Pix`, `Cartão`, `Dinheiro`) | `RN12` | Formas aceitas pelo restaurante (KPI 7) |
+| `PAGAMENTO.valor` | `CHECK > 0` | `RN29` | Pagamento sem valor não existe |
+| `PAGAMENTO.status_pagamento` | `CHECK` em (`Pendente`, `Pago`, `Estornado`); padrão `Pendente` | `RN19`, `RN26` | O estorno fica registrado em vez de apagar o pagamento |
+| `ENTREGA.id_pedido` | `NOT NULL`, `UNIQUE` | `RN15` | Um pedido tem no máximo uma entrega |
+| `ENTREGA.status_entrega` | `CHECK` em (`Aguardando`, `Em rota`, `Entregue`, `Cancelada`); padrão `Aguardando` | `RN15` | Permite acompanhar o delivery (P1) |
+| `ENTREGA` (`ck_entrega_datas`, `ck_entrega_final`) | `CHECK` de ordem cronológica e de data obrigatória em `Entregue` | `RN28` | Impede entrega anterior à saída |
+| `DESPESA.descricao`, `categoria`, `valor`, `id_funcionario` | `NOT NULL`; `valor` com `CHECK > 0` | `RN20`, `RN29` | Toda despesa é completa e tem responsável |
+
+#### Regras que o banco não impõe diretamente
+
+Algumas regras envolvem mais de uma tabela, e o `CHECK` do MySQL só enxerga a própria linha. Por isso elas são conferidas pelas consultas de auditoria do script, e as de acesso ficam na aplicação:
+
+| Regra | Como é conferida |
+|---|---|
+| `RN03` (identificador único) | `A04` |
+| `RN07` (verificar estoque antes de confirmar o pedido) | Aplicação; o banco impede estoque negativo e `A02` confere |
+| `RN18` (motivo só em cancelado) | `CHECK` e `A01` |
+| `RN23` (pedido com itens) | `A05` |
+| `RN24` (valor total igual à soma dos itens) | `A06` |
+| `RN25` (pedido concluído quitado) | `A07` |
+| `RN26` (estorno só em cancelado) | `A08`, `A16` |
+| `RN27` (endereço pertence ao cliente do pedido) | `A10` |
+| `RN15`, `RN28` (presencial sem entrega, datas coerentes) | `A11`, `A12`, `A14`, `A15` |
+| `RN21`, `RN22` (acesso e LGPD) | Controle de acesso da aplicação (RNF03, RNF05) |
+
+#### Decisões arquiteturais
+
+- **13 tabelas em 3FN,** sem tabelas auxiliares fora do DER aprovado.
+- **`DECIMAL(10,2)` para dinheiro,** porque `FLOAT` acumula erro de arredondamento nas somas de `G02` e `G14`.
+- **`CHECK` em vez de `ENUM`** para canais, formas de pagamento e status: a lista permitida fica visível no `CREATE TABLE` e pode ser alterada sem recriar a coluna.
+- **`PEDIDO.valor_total` desnormalizado de propósito:** evita somar os itens a cada consulta mensal, e a auditoria `A06` garante que não divirja dos itens.
+- **Índices** em `PEDIDO(data_hora, status)`, `PEDIDO(canal_atendimento)`, `PAGAMENTO(id_pedido, status_pagamento)`, `COMPRA(data_compra)` e `DESPESA(data_despesa)`, que sustentam as consultas mensais (`G02` a `G08`, `G10`, `G13`).
+- **MySQL 8.0.16+ com InnoDB e `utf8mb4`:** InnoDB para chaves estrangeiras e transações; 8.0.16 é a primeira versão que aplica `CHECK`.
 
 ---
 
@@ -220,22 +334,40 @@ Com isso, todas as 13 tabelas estão na 3FN.
 
 #### Informações Estratégicas e Métricas Gerenciais (KPIs)
 
-- **KPI 1 — Estoque baixo:** identifica produtos cuja quantidade está abaixo do estoque mínimo (`G01`).
-- **KPI 2 — Faturamento mensal:** acompanha o valor das vendas concluídas por mês (`G02`).
-- **KPI 3 — Pedidos concluídos e ticket médio:** acompanha a quantidade de pedidos concluídos e o valor médio mensal (`G03`).
-- **KPI 4 — Taxa de cancelamento:** acompanha o percentual de pedidos cancelados (`G04`).
-- **KPI 5 — Produtos mais vendidos:** identifica os produtos com maior quantidade vendida (`G05`).
-- **KPI 6 — Vendas por canal:** compara pedidos e faturamento por canal (`G06`).
-- **KPI 7 — Arrecadação por forma de pagamento:** compara valores pagos por forma (`G07`).
-- **KPI 8 — Compras por fornecedor:** acompanha valores adquiridos por mês (`G08`).
-- **KPI 9 — Clientes sem pedido:** identifica clientes cadastrados sem pedidos (`G09`).
-- **KPI 10 — Despesas por categoria:** acompanha os gastos por categoria e mês (`G10`).
-- **KPI 11 — Situação das entregas:** acompanha entregas por situação e período (`G11`).
-- **KPI 12 — Pedidos por funcionário:** acompanha pedidos concluídos e faturamento por funcionário (`G12`).
-- **KPI 13 — Pagamentos divididos:** identifica pedidos concluídos com mais de um pagamento (`G13`).
-- **KPI 14 — Saldo demonstrativo:** compara vendas, compras e despesas por mês (`G14`).
+Cada KPI tem fórmula, período e meta, e é calculado por uma consulta do script. Os valores de referência vêm da massa fictícia, que representa cerca de 10% do volume real (ver seção 4). Por isso as metas usam proporções e comparação entre meses, e não valores absolutos em reais. As metas são **propostas do grupo, a validar com a proprietária.**
+
+| KPI | Fórmula | Período | Meta proposta | Referência na massa | Consulta |
+|---|---|---|---|---|---|
+| **KPI 1 — Estoque baixo** | Produtos com `quantidade_estoque < estoque_minimo` | Diário | 0 produtos abaixo do mínimo | 6 de 16 produtos | `G01` |
+| **KPI 2 — Faturamento mensal** | Σ `valor_total` dos pedidos `Concluido` | Mensal | Não cair em relação ao mês anterior | ago R$ 8.388 · set R$ 8.801 · out R$ 8.671 | `G02` |
+| **KPI 3 — Pedidos concluídos e ticket médio** | Contagem de pedidos `Concluido` e média de `valor_total` | Mensal | Ticket médio ≥ R$ 30,00 | 290, 290 e 270 pedidos; ticket de R$ 28,92 a R$ 32,11 | `G03` |
+| **KPI 4 — Taxa de cancelamento** | pedidos `Cancelado` ÷ total de pedidos × 100 | Mensal | ≤ 5% | 3,33% | `G04` |
+| **KPI 5 — Produtos mais vendidos** | Σ `quantidade` dos itens de pedidos concluídos, por produto (top 10) | Mensal | Todo produto do top 10 com estoque ≥ mínimo | Marmita de frango lidera, com 195 unidades | `G05` |
+| **KPI 6 — Vendas por canal** | Pedidos concluídos e Σ `valor_total` por `canal_atendimento` | Mensal | Acompanhar a participação de cada canal | Presencial 40,6%, App 37,9%, WhatsApp 21,5% dos pedidos concluídos | `G06` |
+| **KPI 7 — Arrecadação por forma de pagamento** | Σ `valor` dos pagamentos `Pago`, por `forma_pagamento` | Mensal | Acompanhar a participação de cada forma | Pix R$ 10.520 · Cartão R$ 10.146 · Dinheiro R$ 5.194 | `G07` |
+| **KPI 8 — Compras por fornecedor** | Σ `quantidade × custo_unitario` dos itens de compra | Mensal | Compras ≤ 30% do faturamento do mês | 20% a 29% do faturamento | `G08` |
+| **KPI 9 — Clientes sem pedido** | clientes sem nenhum pedido ÷ total de clientes × 100 | Mensal | ≤ 20% | 25% (15 de 60) | `G09` |
+| **KPI 10 — Despesas por categoria** | Σ `valor` das despesas, por `categoria` | Mensal | Variação ≤ 15% entre meses | R$ 5.044 · R$ 5.015 · R$ 5.548 | `G10` |
+| **KPI 11 — Situação das entregas** | entregas `Entregue` ÷ total de entregas × 100 | Mensal | ≥ 95% entregues nos meses fechados | 100% entregues em ago e set | `G11` |
+| **KPI 12 — Pedidos por funcionário** | Contagem de pedidos `Concluido` e Σ `valor_total`, por funcionário | Mensal | Nenhum funcionário com mais de 40% dos pedidos | 252 pedidos é o maior valor, 30% do total | `G12` |
+| **KPI 13 — Pagamentos divididos** | pedidos concluídos com mais de 1 pagamento `Pago` ÷ pedidos concluídos × 100 | Mensal | Acompanhar (sem meta) | 9,2% (78 de 850) | `G13` |
+| **KPI 14 — Saldo demonstrativo** | faturamento − compras − despesas | Mensal | Saldo > 0 em todo mês | R$ 920 · R$ 2.018 · R$ 1.058 | `G14` |
+
+O saldo do KPI 14 é demonstrativo, não é lucro contábil, porque compras e consumo de estoque não ocorrem necessariamente no mesmo mês.
 
 A análise de estornos é realizada pela auditoria `A16`, que identifica estornos associados a pedidos que não estão cancelados. Receita após taxas e margem contábil não são apresentados como KPIs, pois o modelo atual não possui dados de taxas nem metodologia contábil de custo médio.
+
+#### Potencial dos dados para BI
+
+As consultas `G01` a `G14` já retornam dados agregados por mês, canal, forma de pagamento, produto e funcionário. Isso permite que uma ferramenta como Power BI ou Metabase, ligada diretamente ao MySQL, monte um painel com cinco áreas: vendas (KPIs 2, 3 e 6), cancelamentos (KPI 4), estoque (KPIs 1 e 5), financeiro (KPIs 7, 8, 10 e 14) e delivery (KPIs 11 e 12). As consultas de auditoria `A01` a `A18` servem como painel de qualidade dos dados: todas devem retornar zero linhas.
+
+#### Aplicações analíticas e de IA
+
+- **Previsão de demanda:** `ITEM_PEDIDO` e `PEDIDO.data_hora` formam uma série histórica de vendas por produto, que pode alimentar um modelo de previsão para apoiar as compras.
+- **Alerta inteligente de reposição:** cruzar a previsão com `PRODUTO.estoque_minimo` e `ITEM_COMPRA` indica quando e quanto comprar, em vez de esperar o produto acabar (P5).
+- **Risco de cancelamento:** `PEDIDO.canal_atendimento`, horário e `motivo_cancelamento` permitem identificar os padrões que mais geram cancelamento (P2).
+- **Segmentação de clientes:** frequência de pedidos e ticket médio por cliente permitem separar clientes recorrentes de clientes sem pedido (KPI 9) e planejar ações de retorno.
+- **Tempo de entrega:** com `data_hora_saida` e `data_hora_entrega` é possível estimar o tempo de entrega por bairro, usando `ENDERECO.bairro` (P1).
 
 #### Tabela de Rastreabilidade
 
@@ -281,6 +413,24 @@ O script SQL completo para criação do banco de dados MySQL, inserção de tabe
 A massa de dados foi elaborada de forma fictícia e coerente com a escala da organização (simulando proporções reais de seus 3.000 atendimentos mensais) para testar o comportamento do sistema sob cenários operacionais variados.
 
 Os comandos `INSERT INTO` da massa de dados estão integrados ao script principal. Acesse o arquivo [docs/script.sql](./docs/script.sql) para consultar a criação do banco, as tabelas, as restrições, a massa fictícia e as consultas SQL.
+
+**Como o volume real justifica a quantidade de registros.** O restaurante atende cerca de 3.000 clientes por mês (cerca de 750 pedidos por semana). A massa simula **3 meses (agosto a outubro de 2026) com cerca de 300 pedidos por mês**, ou seja, aproximadamente 10% do volume real. O grupo escolheu essa escala para manter o banco leve nos testes e ainda assim ter volume suficiente para as consultas mensais.
+
+| Tabela | Registros | Como foi dimensionado |
+|---|---|---|
+| `PEDIDO` | 900 | 300 por mês durante 3 meses |
+| `ITEM_PEDIDO` | 1.495 | cerca de 1,7 item por pedido |
+| `PAGAMENTO` | 947 | um por pedido, mais pagamentos divididos e estornos |
+| `ENTREGA` | 313 | pedidos de WhatsApp e aplicativo (os presenciais não têm entrega) |
+| `CLIENTE` | 60 (mais 1 temporário usado no `DELETE`) | base ativa reduzida; 15 sem pedido, para o KPI 9 |
+| `ENDERECO` | 55 | endereços dos clientes que recebem entrega |
+| `PRODUTO` | 16 em 5 categorias | cardápio resumido, com 6 produtos abaixo do estoque mínimo |
+| `COMPRA` / `ITEM_COMPRA` | 40 / 120 | cerca de 13 compras por mês, em 5 fornecedores |
+| `DESPESA` | 60 | cerca de 20 despesas por mês |
+| `FUNCIONARIO` | 6 | equipe de 5 funcionários, mais a proprietária |
+
+A massa cobre as situações reais: 850 pedidos concluídos, 30 cancelados, 10 em preparo e 10 pendentes; 7 pagamentos estornados; 78 pedidos com pagamento dividido; três canais; três formas de pagamento; e entregas `Entregue` e `Aguardando`. Os nomes, telefones e endereços são fictícios e não representam dados reais do restaurante.
+
 
 
 
