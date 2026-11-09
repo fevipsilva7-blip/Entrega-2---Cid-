@@ -38,11 +38,13 @@
 
 - **Escopo do sistema:** O banco de dados reúne as informações globais da organização, englobando clientes, produtos, categorias de itens, fornecedores, compras de estoque, despesas, funcionários, pedidos, itens do pedido, status de entrega e registros de pagamento/reembolso.
 - **Justificativa da escolha:** Organização real de pequeno porte com operação intensa e processos de negócio bem delimitados. Apresenta desafios reais de gestão de dados adequados para o desenvolvimento da modelagem relacional.
+- **Vínculo com a organização:** o integrante Lucas Freitas de Oliveira é filho da proprietária e a auxilia na administração do restaurante, o que facilitou o acesso. O vínculo não dispensa a comprovação da entrevista com a proprietária, realizada no restaurante.
 - **Evidências da organização:** 
   - **Endereço:** Endereço: Rua Maciel Monteiro, nº 264, São Paulo – SP, CEP 03566-000.
-  - **Perfil Google Meu Negócio / Comprovante:** Rua Maciel monteiro 264 Gopouva
-  - **Fotos do Local:** imagem.faixada.png
-- **Responsável pela organização:** Antonia Claudia Freitas da Silva Oliveira e Lucas Freitas de Oliveira , proprietária e administradora. A entrevistada autorizou a utilização de seu nome completo neste trabalho.
+  - **Perfil Google Meu Negócio:** [Ver o restaurante no Google Maps](https://maps.app.goo.gl/KDBX8arhdzu8oP3Q6)
+  - **Fotos do local:** ![Fachada do restaurante](./img/imagem-faixada.png)
+  - **Foto da entrevista:** ![Equipe que realizou a entrevista](./img/imagem.entrevista.png)
+- **Responsável pela organização:** Antonia Claudia Freitas da Silva Oliveira, proprietária e administradora. **Contato:** por intermédio do integrante Lucas Freitas de Oliveira, filho da proprietária, que repassa as ligações do professor. A entrevistada autorizou a utilização de seu nome completo neste trabalho.
 #### Relato das Entrevistas
 - **Quem:** Antonia Claudia Freitas da Silva Oliveira, proprietária do estabelecimento.
 - **Quando:** 20/10/2026. 
@@ -51,7 +53,7 @@
 - **Autorização:** A entrevistada autorizou a utilização de seu nome completo no trabalho.
 - **Objetivo:** Levantar informações sobre os processos administrativos e operacionais, identificar necessidades e coletar requisitos para a modelagem do banco de dados.
 - **Principais assuntos abordados:** Gestão de pedidos, delivery, cadastro de clientes, controle de estoque, compras, pagamentos, cancelamentos, reembolsos e despesas.
-- **Comprovação:** A entrevista foi registrada no levantamento. A fotografia da entrevista não foi publicada no repositório por motivo de privacidade da entrevistada.
+- **Comprovação:** a foto da entrevista está em [`img/imagem.entrevista.png`](./img/imagem.entrevista.png), e o relato completo está no levantamento.
 - **Levantamento completo:** O detalhamento das respostas, processos, requisitos e regras de negócio está disponível no documento. [Acessar o Levantamento](./Levantamento/levantamento.md)
 
 
