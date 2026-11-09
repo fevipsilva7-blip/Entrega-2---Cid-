@@ -39,7 +39,7 @@
 - **Escopo do sistema:** O banco de dados reúne as informações globais da organização, englobando clientes, produtos, categorias de itens, fornecedores, compras de estoque, despesas, funcionários, pedidos, itens do pedido, status de entrega e registros de pagamento/reembolso.
 - **Justificativa da escolha:** Organização real de pequeno porte com operação intensa e processos de negócio bem delimitados. Apresenta desafios reais de gestão de dados adequados para o desenvolvimento da modelagem relacional.
 - **Evidências da organização:** 
-  - **Endereço:** Rua Maciel Monteiro, nº 264.
+  - **Endereço:** Endereço: Rua Maciel Monteiro, nº 264, São Paulo – SP, CEP 03566-000.
   - **Perfil Google Meu Negócio / Comprovante:** Rua Maciel monteiro 264 Gopouva
   - **Fotos do Local:** imagem.faixada.png
 - **Responsável pela organização:** Antonia Claudia Freitas da Silva Oliveira, proprietária e administradora. A entrevistada autorizou a utilização de seu nome completo neste trabalho.
