@@ -347,7 +347,7 @@ Cada KPI tem fórmula, período e meta, e é calculado por uma consulta do scrip
 
 | KPI | Fórmula | Período | Meta proposta | Referência na massa | Consulta |
 |---|---|---|---|---|---|
-| **KPI 1 — Estoque baixo** | Produtos com `quantidade_estoque < estoque_minimo` | Diário | 0 produtos abaixo do mínimo | 6 de 16 produtos | `G01` |
+| **KPI 1 — Estoque baixo** | Produtos com `quantidade_estoque <= estoque_minimo`| Diário | 0 produtos abaixo do mínimo | 6 de 16 produtos | `G01` |
 | **KPI 2 — Faturamento mensal** | Σ `valor_total` dos pedidos `Concluido` | Mensal | Não cair em relação ao mês anterior | ago R$ 8.388 · set R$ 8.801 · out R$ 8.671 | `G02` |
 | **KPI 3 — Pedidos concluídos e ticket médio** | Contagem de pedidos `Concluido` e média de `valor_total` | Mensal | Ticket médio ≥ R$ 30,00 | 290, 290 e 270 pedidos; ticket de R$ 28,92 a R$ 32,11 | `G03` |
 | **KPI 4 — Taxa de cancelamento** | pedidos `Cancelado` ÷ total de pedidos × 100 | Mensal | ≤ 5% | 3,33% | `G04` |
