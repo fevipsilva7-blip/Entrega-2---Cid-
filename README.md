@@ -215,7 +215,7 @@ As chaves estrangeiras representam os relacionamentos do modelo e garantem a **i
 
 - **`PEDIDO.id_cliente` é opcional.** A `RN01` exige dados do cliente apenas para pedidos com entrega; pedidos presenciais podem ser registrados sem cliente. A coluna `PEDIDO.id_cliente` aceita `NULL`, pois pedidos presenciais podem ser registrados sem cliente.
 - **`ENTREGA.id_endereco` é obrigatória.** Uma entrega sem endereço de destino não pode ser realizada (`RN01`).
-- **`PAGAMENTO.id_pedido` aponta para o pedido, e não o contrário.** Assim um mesmo pedido pode ter vários pagamentos, o que atende o KPI 14.
+- **`PAGAMENTO.id_pedido` aponta para o pedido, e não o contrário.** Assim um mesmo pedido pode ter vários pagamentos, o que atende o KPI 13.
 - **As FKs não usam exclusão em cascata.** Pedidos cancelados e seus registros financeiros devem ser preservados (`RN17`), então não se apaga um registro que ainda é referenciado. As FKs não utilizam exclusão em cascata, preservando o histórico de pedidos e pagamentos.
 
 ---
@@ -347,14 +347,14 @@ Cada KPI tem fórmula, período e meta, e é calculado por uma consulta do scrip
 
 | KPI | Fórmula | Período | Meta proposta | Referência na massa | Consulta |
 |---|---|---|---|---|---|
-| **KPI 1 — Estoque baixo** | Produtos com `quantidade_estoque <= estoque_minimo`| Diário | 0 produtos abaixo do mínimo | 6 de 16 produtos | `G01` |
+| **KPI 1 — Estoque baixo** | Produtos com `quantidade_estoque <= estoque_minimo` | Diário | 0 produtos abaixo do mínimo | 6 de 16 produtos | `G01` |
 | **KPI 2 — Faturamento mensal** | Σ `valor_total` dos pedidos `Concluido` | Mensal | Não cair em relação ao mês anterior | ago R$ 8.388 · set R$ 8.801 · out R$ 8.671 | `G02` |
 | **KPI 3 — Pedidos concluídos e ticket médio** | Contagem de pedidos `Concluido` e média de `valor_total` | Mensal | Ticket médio ≥ R$ 30,00 | 290, 290 e 270 pedidos; ticket de R$ 28,92 a R$ 32,11 | `G03` |
 | **KPI 4 — Taxa de cancelamento** | pedidos `Cancelado` ÷ total de pedidos × 100 | Mensal | ≤ 5% | 3,33% | `G04` |
-| **KPI 5 — Produtos mais vendidos** | Σ `quantidade` dos itens de pedidos concluídos, por produto (top 10) | Mensal | Acompanhar os produtos mais vendidos e sua situação de estoque | Marmita de frango lidera, com 195 unidades | `G05` |
+| **KPI 5 — Produtos mais vendidos** | Σ `quantidade` dos itens de pedidos concluídos, por produto (top 10), com quantidade em estoque e estoque mínimo | Mensal | Acompanhar os produtos mais vendidos e sua situação de estoque | Marmita de frango lidera, com 195 unidades | `G05` |
 | **KPI 6 — Vendas por canal** | Pedidos concluídos e Σ `valor_total` por `canal_atendimento` | Mensal | Acompanhar a participação de cada canal | Presencial 40,6%, App 37,9%, WhatsApp 21,5% dos pedidos concluídos | `G06` |
 | **KPI 7 — Arrecadação por forma de pagamento** | Σ `valor` dos pagamentos `Pago`, por `forma_pagamento` | Mensal | Acompanhar a participação de cada forma | Pix R$ 10.520 · Cartão R$ 10.146 · Dinheiro R$ 5.194 | `G07` |
-| **KPI 8 — Compras por fornecedor** | Σ `quantidade × custo_unitario` dos itens de compra | Mensal | Compras ≤ 30% do faturamento do mês | 20% a 29% do faturamento | `G08` |
+| **KPI 8 — Compras por fornecedor** | Σ `quantidade × custo_unitario` dos itens de compra, comparada ao faturamento mensal | Mensal | Compras ≤ 30% do faturamento do mês, demonstrado pela G08 | 20% a 29% do faturamento | `G08` |
 | **KPI 9 — Clientes sem pedido** | clientes sem nenhum pedido ÷ total de clientes × 100 | Mensal | ≤ 20% | 25% (15 de 60) | `G09` |
 | **KPI 10 — Despesas por categoria** | Σ `valor` das despesas, por `categoria` | Mensal | Variação ≤ 15% entre meses | R$ 5.044 · R$ 5.015 · R$ 5.548 | `G10` |
 | **KPI 11 — Situação das entregas** | entregas `Entregue` ÷ total de entregas × 100 | Mensal | ≥ 95% entregues nos meses fechados | 100% entregues em ago e set | `G11` |
