@@ -4499,15 +4499,16 @@ LEFT JOIN PEDIDO p ON p.id_funcionario=f.id_funcionario AND p.status='Concluido'
 GROUP BY f.id_funcionario, f.nome, f.cargo
 ORDER BY pedidos_concluidos DESC;
 
--- G13 - Quantos pedidos concluidos tiveram mais de um pagamento?
+-- G13 - Quais pedidos concluidos possuem mais de um pagamento Pago?
 -- Atende: P4 (informacoes financeiras) | KPI 13 (pagamentos divididos).
+-- Identifica os pedidos, sem calcular percentual.
 SELECT p.id_pedido, p.valor_total, COUNT(pg.id_pagamento) AS qtd_pagamentos,
        ROUND(SUM(pg.valor),2) AS total_pago
 FROM PEDIDO p JOIN PAGAMENTO pg ON pg.id_pedido=p.id_pedido
 WHERE p.status='Concluido' AND pg.status_pagamento='Pago'
 GROUP BY p.id_pedido, p.valor_total
 HAVING COUNT(pg.id_pagamento) > 1
-ORDER BY p.id_pedido LIMIT 20;
+ORDER BY p.id_pedido;
 
 -- G14 - Qual e o saldo simplificado por mes considerando vendas, compras e despesas?
 -- Atende: P4 (informacoes financeiras) | KPI 14 (saldo demonstrativo).
