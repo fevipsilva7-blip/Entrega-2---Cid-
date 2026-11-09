@@ -397,7 +397,7 @@ As consultas `G01` a `G14` já retornam dados agregados por mês, canal, forma d
 ## 2. Modelo Lógico Relacional
 
 - **Ferramenta utilizada:** brModelo (modelo lógico).
-- **Imagem do modelo lógico:** ![DER Lógico](./DER%20logico/der_logico.png)
+- **Imagem do modelo lógico:** ![DER Lógico](./DER%20logico/der-logico.png)
 
 - **Observação sobre tipos:** O brModelo não oferece os tipos `DECIMAL` nem tamanhos para `VARCHAR`. Por isso, o diagrama pode apresentar `FLOAT` nos campos monetários; no dicionário de dados e no script SQL, os campos financeiros devem utilizar `DECIMAL(10,2)`.
 
