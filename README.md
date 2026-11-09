@@ -491,6 +491,18 @@ A massa cobre as situações reais: 850 pedidos concluídos, 30 cancelados, 10 e
 | **Justificativa da escolha final** | O grupo manteve os códigos `RN01` a `RN22` do levantamento feito com a proprietária e só acrescentou `RN23` a `RN29` para as validações já existentes no script, em vez de reescrever as regras. As metas dos KPIs são propostas do grupo, a validar com a proprietária. |
 | **Reflexão crítica** | A IA acelera a revisão e a padronização de códigos, mas erra quando trabalha com versão desatualizada ou sem acesso ao material do professor. Por isso o grupo conferiu as afirmações no repositório e executou o script no MySQL. A estimativa de nota da IA é apenas orientativa. |
 
+
+| Item | O que registrar |
+| :--- | :--- |
+| **Ferramenta e etapa** | Manus, assistente de Inteligência Artificial utilizado nas etapas de revisão do levantamento, conferência da consistência entre README, requisitos e regras de negócio, auxílio na escrita e revisão das consultas SQL, validação do script e organização da documentação. |
+| **Motivação** | Apoiar a organização do texto conforme o esqueleto da entrega, revisar a coerência entre o modelo lógico e o SQL, auxiliar na criação de consultas gerenciais e identificar inconsistências entre os documentos. |
+| **Prompt(s) utilizados** | “Analise este trabalho comparando-o com o esqueleto da Entrega 2 e identifique o que está faltando”; “Revise as consultas G01 a G15 e verifique se elas atendem aos KPIs”; “Compare o README, o levantamento e o script SQL e aponte divergências”; “Verifique se o script é compatível com o MySQL 8”. |
+| **Resposta recebida** | Sugestões de ajustes no levantamento, requisitos, regras de negócio, consultas gerenciais, auditorias, tabela de rastreabilidade e documentação do projeto. Também foram identificadas e corrigidas inconsistências nas consultas G01, G05, G08, G09, G11, G13 e G15. |
+| **Fontes consultadas e verificadas** | Documentação oficial do MySQL 8.0, especialmente sobre `CREATE TABLE`, `CONSTRAINT`, `CHECK`, `FOREIGN KEY`, `GROUP BY`, CTEs e funções de agregação. |
+| **Trechos rejeitados ou corrigidos** | Foram revisadas sugestões que não estavam compatíveis com o modelo aprovado, como a inclusão de entidades novas para reembolso, alterações no diagrama e regras que não poderiam ser implementadas pelas tabelas existentes. |
+| **Justificativa da escolha final** | As sugestões da Inteligência Artificial foram utilizadas somente após conferência com o diagrama lógico, o dicionário de dados, o levantamento e o comportamento do script no MySQL 8. |
+| **Reflexão crítica** | A Inteligência Artificial ajudou a localizar inconsistências e acelerar a revisão da documentação e do SQL, mas suas sugestões precisaram ser conferidas pelo grupo. A validação final foi realizada comparando o script com o modelo lógico e executando o banco no MySQL 8. |
+
 ---
 
 ## 7. Apresentação Corporativa Final
