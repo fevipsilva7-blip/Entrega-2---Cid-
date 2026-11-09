@@ -40,11 +40,12 @@
 - **Justificativa da escolha:** Organização real de pequeno porte com operação intensa e processos de negócio bem delimitados. Apresenta desafios reais de gestão de dados adequados para o desenvolvimento da modelagem relacional.
 - **Vínculo com a organização:** o integrante Lucas Freitas de Oliveira é filho da proprietária e a auxilia na administração do restaurante, o que facilitou o acesso. O vínculo não dispensa a comprovação da entrevista com a proprietária, realizada no restaurante.
 - **Evidências da organização:** 
-  - **Endereço:** Endereço: Rua Maciel Monteiro, nº 264, São Paulo – SP, CEP 03566-000.
+  - **Endereço:** Rua Maciel Monteiro, nº 264, São Paulo – SP, CEP 03566-000.
   - **Perfil Google Meu Negócio:** [Ver o restaurante no Google Maps](https://maps.app.goo.gl/KDBX8arhdzu8oP3Q6)
   - **Fotos do local:** ![Fachada do restaurante](./img/imagem-faixada.png)
   - **Foto da entrevista:** ![Equipe que realizou a entrevista](./img/imagem.entrevista.png)
-- **Responsável pela organização:** Antonia Claudia Freitas da Silva Oliveira, proprietária e administradora. **Contato:** por intermédio do integrante Lucas Freitas de Oliveira, filho da proprietária, que repassa as ligações do professor. A entrevistada autorizou a utilização de seu nome completo neste trabalho.
+- **Responsável pela organização:** Antonia Claudia Freitas da Silva Oliveira, proprietária e administradora. A entrevistada autorizou a utilização de seu nome completo neste trabalho.
+- **Contato para comunicação com o grupo:** Lucas Freitas de Oliveira, integrante do grupo e filho da proprietária, responsável por repassar as comunicações do professor.
 #### Relato das Entrevistas
 - **Quem:** Antonia Claudia Freitas da Silva Oliveira, proprietária do estabelecimento.
 - **Quando:** 20/10/2026. 
@@ -353,15 +354,15 @@ Cada KPI tem fórmula, período e meta, e é calculado por uma consulta do scrip
 | **KPI 2 — Faturamento mensal** | Σ `valor_total` dos pedidos `Concluido` | Mensal | Não cair em relação ao mês anterior | ago R$ 8.388 · set R$ 8.801 · out R$ 8.671 | `G02` |
 | **KPI 3 — Pedidos concluídos e ticket médio** | Contagem de pedidos `Concluido` e média de `valor_total` | Mensal | Ticket médio ≥ R$ 30,00 | 290, 290 e 270 pedidos; ticket de R$ 28,92 a R$ 32,11 | `G03` |
 | **KPI 4 — Taxa de cancelamento** | pedidos `Cancelado` ÷ total de pedidos × 100 | Mensal | ≤ 5% | 3,33% | `G04` |
-| **KPI 5 — Produtos mais vendidos** | Σ `quantidade` dos itens de pedidos concluídos, por produto (top 10), com quantidade em estoque e estoque mínimo | Mensal | Acompanhar os produtos mais vendidos e sua situação de estoque | Marmita de frango lidera, com 195 unidades | `G05` |
-| **KPI 6 — Vendas por canal** | Pedidos concluídos e Σ `valor_total` por `canal_atendimento` | Mensal | Acompanhar a participação de cada canal | Presencial 40,6%, App 37,9%, WhatsApp 21,5% dos pedidos concluídos | `G06` |
+| **KPI 5 — Produtos mais vendidos** | Σ `quantidade` dos itens de pedidos concluídos, por produto (top 10), com quantidade em estoque e estoque mínimo | Período total da massa (ago–out/2026) | Acompanhar os produtos mais vendidos e sua situação de estoque | Marmita de frango lidera, com 195 unidades | `G05` |
+| **KPI 6 — Vendas por canal** | Pedidos concluídos e Σ `valor_total` por `canal_atendimento` | Período total da massa (ago–out/2026) | Acompanhar a participação de cada canal | Presencial 40,6%, App 37,9%, WhatsApp 21,5% dos pedidos concluídos | `G06` |
 | **KPI 7 — Arrecadação por forma de pagamento** | Σ `valor` dos pagamentos `Pago`, por `forma_pagamento` | Mensal | Acompanhar a participação de cada forma | Pix R$ 10.520 · Cartão R$ 10.146 · Dinheiro R$ 5.194 | `G07` |
 | **KPI 8 — Compras por fornecedor** | Σ `quantidade × custo_unitario` dos itens de compra, comparada ao faturamento mensal | Mensal | Compras ≤ 30% do faturamento do mês, demonstrado pela G08 | 20% a 29% do faturamento | `G08` |
 | **KPI 9 — Clientes sem pedido** | clientes sem nenhum pedido ÷ total de clientes × 100 | Mensal | ≤ 20% | 25% (15 de 60) | `G09` |
 | **KPI 10 — Despesas por categoria** | Σ `valor` das despesas, por `categoria` | Mensal | Variação ≤ 15% entre meses | R$ 5.044 · R$ 5.015 · R$ 5.548 | `G10` |
 | **KPI 11 — Situação das entregas** | entregas `Entregue` ÷ total de entregas × 100 | Mensal | ≥ 95% entregues nos meses fechados | 100% entregues em ago e set | `G11` |
-| **KPI 12 — Pedidos por funcionário** | Contagem de pedidos `Concluido` e Σ `valor_total`, por funcionário | Mensal | Nenhum funcionário com mais de 40% dos pedidos | 252 pedidos é o maior valor, 30% do total | `G12` |
-| **KPI 13 — Pagamentos divididos** | pedidos concluídos com mais de 1 pagamento `Pago` ÷ pedidos concluídos × 100 | Mensal | Acompanhar (sem meta) | 9,2% (78 de 850) | `G13` |
+| **KPI 12 — Pedidos por funcionário** | Contagem de pedidos `Concluido` e Σ `valor_total`, por funcionário | Período total da massa (ago–out/2026) | Nenhum funcionário com mais de 40% dos pedidos | 252 pedidos é o maior valor, 30% do total | `G12` |
+| **KPI 13 — Pagamentos divididos** | Identificação dos pedidos concluídos que possuem mais de um pagamento com status `Pago` | Período total da massa (ago–out/2026) | Acompanhar (sem meta) | 78 pedidos de 850 concluídos | `G13` |
 | **KPI 14 — Saldo demonstrativo** | faturamento − compras − despesas | Mensal | Saldo > 0 em todo mês | R$ 920 · R$ 2.018 · R$ 1.058 | `G14` |
 
 O saldo do KPI 14 é demonstrativo, não é lucro contábil, porque compras e consumo de estoque não ocorrem necessariamente no mesmo mês.
@@ -488,7 +489,7 @@ A massa cobre as situações reais: 850 pedidos concluídos, 30 cancelados, 10 e
 | **Resposta recebida** | Lista de pendências por item do esqueleto, textos para as seções acima e arquivos revisados (`README.md`, `levantamento.md`, `script.sql`), que o grupo copiou para o repositório. Nenhuma consulta SQL foi alterada: só os comentários de cabeçalho das auditorias. |
 | **Fontes consultadas e verificadas** | O esqueleto e o enunciado do professor, o próprio repositório e o relatório de execução do script no MySQL 8.0.46 feito pelo grupo (`docs/relatorio_execucao_mysql_8.md`). Os números dos KPIs foram conferidos na massa de dados do script. |
 | **Trechos rejeitados ou corrigidos** | A IA leu uma versão antiga do repositório (guardada em cache) e deu uma análise desatualizada; afirmou que os slides não tinham o modelo lógico, o que era falso; errou uma soma de notas e duas porcentagens do KPI 6 (corrigidas). A coluna "Apontamento da correção da E1" foi escrita pela IA sem acesso à correção do professor e deve ser substituída pelo texto original. |
-| **Justificativa da escolha final** | O grupo manteve os códigos `RN01` a `RN22` do levantamento feito com a proprietária e só acrescentou `RN23` a `RN29` para as validações já existentes no script, em vez de reescrever as regras. As metas dos KPIs são propostas do grupo, a validar com a proprietária. |
+| **Justificativa da escolha final** | O grupo manteve os códigos `RN01` a `RN22` do levantamento feito com a proprietária e só acrescentou `RN23` a `RN29` para as validações já existentes no script, em vez de reescrever as regras. As metas dos KPIs são referências acadêmicas propostas pelo grupo e não representam metas oficiais da organização. |
 | **Reflexão crítica** | A IA acelera a revisão e a padronização de códigos, mas erra quando trabalha com versão desatualizada ou sem acesso ao material do professor. Por isso o grupo conferiu as afirmações no repositório e executou o script no MySQL. A estimativa de nota da IA é apenas orientativa. |
 
 (Manus)
