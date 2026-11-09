@@ -379,13 +379,14 @@ Esses processos podem existir na organização ou ser executados por sistemas ex
 | G05 | Dez produtos mais vendidos | P5, KPI 5 |
 | G06 | Pedidos e receita por canal de atendimento | P3, KPI 6 |
 | G07 | Recebimentos por forma de pagamento | P4, KPI 7 |
-| G08 | Compras por mês | P5, KPI 8 |
-| G09 | Clientes sem pedidos | KPI 9 |
+| G08 | Compras por fornecedor e mês | P5, KPI 8 |
+| G09 | Percentual de clientes sem pedido | KPI 9 |
 | G10 | Despesas por categoria e mês | P4, KPI 10 |
-| G11 | Situação das entregas por mês | P1, KPI 11 |
+| G11 | Percentual de entregas concluídas por mês | P1, KPI 11 |
 | G12 | Pedidos concluídos por funcionário | P1, KPI 12 |
-| G13 | Pedidos com pagamento dividido | P3, KPI 13 |
+| G13 | Pedidos com mais de um pagamento | P4, KPI 13 |
 | G14 | Saldo demonstrativo mensal | P4, KPI 14 |
+| G15 | Pedidos cancelados com itens e informações financeiras | P2, RF13 |
 
 As consultas de auditoria `A01` a `A18` verificam as regras `RN01` a `RN29`. A correspondência entre cada auditoria e sua regra está no cabeçalho de cada consulta em `docs/script.sql`.
 
