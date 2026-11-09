@@ -68,21 +68,28 @@
 ##### Requisitos do Sistema
 
 **Requisitos Funcionais:**
-- `RF01`: O sistema deve permitir registrar os dados de clientes necessários para a entrega, incluindo nome, telefone e endereço.
-- `RF02`: O sistema deve registrar produtos com identificação, nome, preço e quantidade em estoque.
-- `RF03`: O sistema deve registrar pedidos contendo número único, data, produtos, valor total, forma de pagamento e canal de origem.
-- `RF04`: O sistema deve associar itens ao pedido, indicando o produto, a quantidade solicitada e o preço praticado.
-- `RF05`: O sistema deve registrar pagamentos vinculados aos pedidos, especificando a forma de pagamento e a situação do pagamento.
-- `RF06`: O sistema deve permitir acompanhar o estoque e identificar produtos próximos de acabar.
-- `RF07`: O sistema deve registrar cancelamentos, seus motivos e as informações de pagamento ou reembolso relacionadas.
-- `RF08`: O sistema deve permitir consultar informações gerenciais, como vendas mensais, despesas, produtos mais vendidos, pagamentos pendentes, cancelamentos e vendas por canal.
-
+- `RF01`: O sistema deve permitir cadastrar clientes com nome, telefone e telefone alternativo.
+- `RF02`: O sistema deve permitir cadastrar endereços com rua, número, bairro, CEP, complemento e cliente relacionado.
+- `RF03`: O sistema deve permitir cadastrar categorias de produtos.
+- `RF04`: O sistema deve permitir cadastrar produtos com nome, descrição, preço, quantidade em estoque, estoque mínimo e categoria.
+- `RF05`: O sistema deve registrar pedidos com número, data e hora, cliente quando aplicável, funcionário, canal, situação, observação e valor total.
+- `RF06`: O sistema deve registrar os produtos de cada pedido com quantidade e preço unitário praticado.
+- `RF07`: O sistema deve registrar pagamentos com pedido, valor, forma de pagamento, situação e data.
+- `RF08`: O sistema deve registrar entregas com pedido, endereço, situação e horários de saída e conclusão.
+- `RF09`: O sistema deve cadastrar fornecedores e registrar compras realizadas.
+- `RF10`: O sistema deve registrar os produtos, as quantidades e os custos unitários de cada compra por meio de `ITEM_COMPRA`.
+- `RF11`: O sistema deve registrar despesas com descrição, categoria, data, valor e funcionário responsável.
+- `RF12`: O sistema deve permitir consultar produtos cuja quantidade esteja abaixo ou igual ao estoque mínimo.
+- `RF13`: O sistema deve manter pedidos cancelados com situação, motivo, itens e informações financeiras relacionadas.
+- `RF14`: O sistema deve permitir consultar vendas, pagamentos, despesas, cancelamentos e vendas por canal.
+- `RF15`: O sistema deve permitir consultar produtos mais vendidos e pagamentos pendentes.
 **Requisitos Não Funcionais:**
-- `RNF01`: O sistema deve permitir acesso por computador e dispositivo móvel, com conexão à internet.
-- `RNF02`: O sistema deve possuir interface simples, adequada a usuários com diferentes níveis de familiaridade com tecnologia.
+- `RNF01`: O sistema deve permitir acesso por computador e dispositivo móvel.
+- `RNF02`: O sistema deve possuir interface simples e adequada a usuários com diferentes níveis de familiaridade tecnológica.
 - `RNF03`: O acesso às informações financeiras deve ser controlado conforme as permissões dos usuários.
-- `RNF04`: O sistema deve permitir que informações registradas manualmente durante uma indisponibilidade sejam atualizadas posteriormente.
-
+- `RNF04`: O sistema deve considerar aproximadamente dois usuários simultâneos.
+- `RNF05`: Os dados pessoais dos clientes devem ser tratados conforme os princípios da LGPD.
+- `RNF06`: O sistema deve permitir atualizar posteriormente informações registradas manualmente durante uma indisponibilidade.
 ##### Regras de Negócio
 
 Os códigos abaixo são os mesmos do levantamento (`Levantamento/levantamento.md`), do dicionário de dados e das consultas de auditoria do `docs/script.sql`. As regras `RN01` a `RN22` vieram do levantamento com a proprietária; as regras `RN23` a `RN29` formalizam validações de integridade que o script já implementa.
@@ -193,7 +200,7 @@ As tabelas associativas usam **PK composta**, formada pelas duas FKs. Isso ident
 | `CLIENTE` | `id_cliente` | — | O telefone muda e pode ser compartilhado, então não serve como chave. |
 | `FUNCIONARIO` | `id_funcionario` | — | Identifica o funcionário em pedidos e despesas sem expor dados pessoais. |
 | `PRODUTO` | `id_produto` | `id_categoria` → `CATEGORIA.id_categoria` | Todo produto pertence a uma categoria existente, e a FK impede categoria inválida. |
-| `PEDIDO` | `id_pedido` | `id_cliente` → `CLIENTE.id_cliente`<br>`id_funcionario` → `FUNCIONARIO.id_funcionario` | Numeração única e sequencial (RN05). As FKs registram quem comprou e quem atendeu. |
+| `PEDIDO` | `id_pedido` | `id_cliente` → `CLIENTE.id_cliente`<br>`id_funcionario` → `FUNCIONARIO.id_funcionario` | Numeração única e sequencial (RN03). As FKs registram quem comprou e quem atendeu. |
 | `ITEM_PEDIDO` | (`id_pedido`, `id_produto`) | `id_pedido` → `PEDIDO.id_pedido`<br>`id_produto` → `PRODUTO.id_produto` | A PK composta evita o mesmo produto repetido no pedido; as FKs impedem item sem pedido ou sem produto. |
 | `ENDERECO` | `id_endereco` | `id_cliente` → `CLIENTE.id_cliente` | Um cliente pode ter vários endereços; cada um pertence a um cliente existente. |
 | `PAGAMENTO` | `id_pagamento` | `id_pedido` → `PEDIDO.id_pedido` | Um pedido pode ter vários pagamentos (pagamento dividido e reembolso), então o pagamento tem chave própria. |
@@ -206,10 +213,10 @@ As tabelas associativas usam **PK composta**, formada pelas duas FKs. Isso ident
 
 As chaves estrangeiras representam os relacionamentos do modelo e garantem a **integridade referencial**: o banco recusa um pedido de cliente inexistente, um item de produto removido ou uma entrega sem endereço. Algumas decisões merecem destaque:
 
-- **`PEDIDO.id_cliente` é opcional.** A `RN01` exige dados do cliente apenas para pedidos com entrega; pedidos presenciais podem ser registrados sem cliente. `A coluna `PEDIDO.id_cliente` aceita `NULL`, pois pedidos presenciais podem ser registrados sem cliente.`
+- **`PEDIDO.id_cliente` é opcional.** A `RN01` exige dados do cliente apenas para pedidos com entrega; pedidos presenciais podem ser registrados sem cliente. A coluna `PEDIDO.id_cliente aceita `NULL`, pois pedidos presenciais podem ser registrados sem cliente.
 - **`ENTREGA.id_endereco` é obrigatória.** Uma entrega sem endereço de destino não pode ser realizada (`RN01`).
 - **`PAGAMENTO.id_pedido` aponta para o pedido, e não o contrário.** Assim um mesmo pedido pode ter vários pagamentos, o que atende o KPI 14.
-- **As FKs não usam exclusão em cascata.** Pedidos cancelados e seus registros financeiros devem ser preservados (`RN03`), então não se apaga um registro que ainda é referenciado. `As FKs não utilizam exclusão em cascata, preservando o histórico de pedidos e pagamentos.`
+- **As FKs não usam exclusão em cascata.** Pedidos cancelados e seus registros financeiros devem ser preservados (`RN17`), então não se apaga um registro que ainda é referenciado. `As FKs não utilizam exclusão em cascata, preservando o histórico de pedidos e pagamentos.
 
 ---
 
@@ -231,7 +238,7 @@ A 2FN exige que todo atributo que não faz parte da chave dependa da chave intei
 
 - **1FN:** cada linha representa um produto em um pedido, com valores atômicos e sem listas.
 - **2FN:** `quantidade` e `preco_unitario` dependem do par (pedido, produto) por inteiro: a quantidade de um produto é diferente em cada pedido, e o preço praticado também. O nome, a descrição e o preço atual do produto dependeriam só de `id_produto`, ou seja, de parte da chave. Por isso ficam em `PRODUTO`, e não em `ITEM_PEDIDO`.
-- **3FN:** nenhum atributo não-chave determina outro. `preco_unitario` não é repetição de `PRODUTO.preco`: é o preço **praticado na venda**, que pode ser diferente do preço atual (`RN04`). O subtotal do item não é armazenado, porque é calculável (`quantidade × preco_unitario`).
+- **3FN:** nenhum atributo não-chave determina outro. `preco_unitario` não é repetição de `PRODUTO.preco`: é o preço **praticado na venda**, que pode ser diferente do preço atual (`RN06`). O subtotal do item não é armazenado, porque é calculável (`quantidade × preco_unitario`).
 
 **Normalização de `ITEM_COMPRA`** (PK: `id_compra` + `id_produto`):
 
@@ -344,7 +351,7 @@ Cada KPI tem fórmula, período e meta, e é calculado por uma consulta do scrip
 | **KPI 2 — Faturamento mensal** | Σ `valor_total` dos pedidos `Concluido` | Mensal | Não cair em relação ao mês anterior | ago R$ 8.388 · set R$ 8.801 · out R$ 8.671 | `G02` |
 | **KPI 3 — Pedidos concluídos e ticket médio** | Contagem de pedidos `Concluido` e média de `valor_total` | Mensal | Ticket médio ≥ R$ 30,00 | 290, 290 e 270 pedidos; ticket de R$ 28,92 a R$ 32,11 | `G03` |
 | **KPI 4 — Taxa de cancelamento** | pedidos `Cancelado` ÷ total de pedidos × 100 | Mensal | ≤ 5% | 3,33% | `G04` |
-| **KPI 5 — Produtos mais vendidos** | Σ `quantidade` dos itens de pedidos concluídos, por produto (top 10) | Mensal | Todo produto do top 10 com estoque ≥ mínimo | Marmita de frango lidera, com 195 unidades | `G05` |
+| **KPI 5 — Produtos mais vendidos** | Σ `quantidade` dos itens de pedidos concluídos, por produto (top 10) | Mensal | Acompanhar os produtos mais vendidos e sua situação de estoque | Marmita de frango lidera, com 195 unidades | `G05` |
 | **KPI 6 — Vendas por canal** | Pedidos concluídos e Σ `valor_total` por `canal_atendimento` | Mensal | Acompanhar a participação de cada canal | Presencial 40,6%, App 37,9%, WhatsApp 21,5% dos pedidos concluídos | `G06` |
 | **KPI 7 — Arrecadação por forma de pagamento** | Σ `valor` dos pagamentos `Pago`, por `forma_pagamento` | Mensal | Acompanhar a participação de cada forma | Pix R$ 10.520 · Cartão R$ 10.146 · Dinheiro R$ 5.194 | `G07` |
 | **KPI 8 — Compras por fornecedor** | Σ `quantidade × custo_unitario` dos itens de compra | Mensal | Compras ≤ 30% do faturamento do mês | 20% a 29% do faturamento | `G08` |
@@ -361,7 +368,7 @@ A análise de estornos é realizada pela auditoria `A16`, que identifica estorno
 
 #### Potencial dos dados para BI
 
-As consultas `G01` a `G14` já retornam dados agregados por mês, canal, forma de pagamento, produto e funcionário. Isso permite que uma ferramenta como Power BI ou Metabase, ligada diretamente ao MySQL, monte um painel com cinco áreas: vendas (KPIs 2, 3 e 6), cancelamentos (KPI 4), estoque (KPIs 1 e 5), financeiro (KPIs 7, 8, 10 e 14) e delivery (KPIs 11 e 12). As consultas de auditoria `A01` a `A18` servem como painel de qualidade dos dados: todas devem retornar zero linhas.
+As consultas `G01` a `G15` já retornam dados agregados por mês, canal, forma de pagamento, produto e funcionário. Isso permite que uma ferramenta como Power BI ou Metabase, ligada diretamente ao MySQL, monte um painel com cinco áreas: vendas (KPIs 2, 3 e 6), cancelamentos (KPI 4), estoque (KPIs 1 e 5), financeiro (KPIs 7, 8, 10 e 14) e delivery (KPIs 11 e 12). As consultas de auditoria `A01` a `A18` servem como painel de qualidade dos dados: todas devem retornar zero linhas.
 
 #### Aplicações analíticas e de IA
 
@@ -376,8 +383,8 @@ As consultas `G01` a `G14` já retornam dados agregados por mês, canal, forma d
 | Problema ou KPI | Tabelas envolvidas | Consulta no script |
 | :--- | :--- | :--- |
 | `P1` — Acompanhamento dos pedidos de delivery | `PEDIDO`, `ITEM_PEDIDO`, `ENTREGA`, `CLIENTE`, `FUNCIONARIO` | `G11, G12` |
-| `P2` — Controle de cancelamentos e reembolsos | `PEDIDO`, `ITEM_PEDIDO`, `PAGAMENTO` | `G04, A16` |
-| `P3` — Comparação entre canais de venda | `PEDIDO`, `PAGAMENTO` | `G06, G13` |
+| `P2` — Controle de cancelamentos e reembolsos | `PEDIDO`, `ITEM_PEDIDO`, `PRODUTO`, `PAGAMENTO` | `G04, G15, A16` |
+| `P3` — Comparação entre canais de venda | `PEDIDO`, `PAGAMENTO` | `G06` |
 | `P4` — Organização das informações financeiras | `PEDIDO`, `PAGAMENTO`, `COMPRA`, `ITEM_COMPRA`, `DESPESA` | `G02, G03, G07, G10, G14` |
 | `P5` — Acompanhamento dos produtos e do estoque | `PRODUTO`, `CATEGORIA`, `FORNECEDOR`, `COMPRA`, `ITEM_COMPRA` | `G01, G05, G08` |
 | `KPI 1` — Estoque baixo | `PRODUTO`, `CATEGORIA` | `G01` |
@@ -394,6 +401,7 @@ As consultas `G01` a `G14` já retornam dados agregados por mês, canal, forma d
 | `KPI 12` — Pedidos por funcionário | `FUNCIONARIO`, `PEDIDO` | `G12` |
 | `KPI 13` — Pagamentos divididos | `PAGAMENTO`, `PEDIDO` | `G13` |
 | `KPI 14` — Saldo demonstrativo | `PEDIDO`, `COMPRA`, `ITEM_COMPRA`, `DESPESA` | `G14` |
+| `RF13` — Pedidos cancelados detalhados | `PEDIDO`, `ITEM_PEDIDO`, `PRODUTO`, `PAGAMENTO` | `G15` |
 ## 2. Modelo Lógico Relacional
 
 - **Ferramenta utilizada:** brModelo (modelo lógico).
@@ -410,11 +418,15 @@ O script SQL completo para criação do banco de dados MySQL, inserção de tabe
 
 ### Validação do script SQL
 
-O script passou por uma validação estrutural em SQLite em memória. Foram verificadas as 13 tabelas, as inserções, as chaves estrangeiras, as restrições `CHECK`, os `JOINs`, os comandos `UPDATE` e `DELETE`, as consultas e as 18 auditorias.
+O script passou por uma validação estrutural em SQLite em memória. Foram verificadas as 13 tabelas, as inserções, as chaves estrangeiras, as restrições `CHECK`, os `JOINs`, os comandos `UPDATE` e `DELETE`, as consultas gerenciais `G01` a `G15` e as 18 auditorias.
 
 O relatório completo está disponível em [docs/validacao_script.md](./docs/validacao_script.md).
 
 Essa validação é complementar e não substitui a execução no MySQL 8, que é o SGBD definido para o projeto.
+
+### Execução no MySQL 8
+
+O script original foi executado em um servidor MySQL 8.0.46 em ambiente de teste, sem erros. Foram confirmadas as 13 tabelas, a massa de dados, as consultas `G01` a `G15` e as auditorias `A01` a `A18`. O relatório está disponível em [docs/relatorio_execucao_mysql_8.md](./docs/relatorio_execucao_mysql_8.md).
 
 
 
