@@ -42,7 +42,7 @@
   - **Endereço:** Endereço: Rua Maciel Monteiro, nº 264, São Paulo – SP, CEP 03566-000.
   - **Perfil Google Meu Negócio / Comprovante:** Rua Maciel monteiro 264 Gopouva
   - **Fotos do Local:** imagem.faixada.png
-- **Responsável pela organização:** Antonia Claudia Freitas da Silva Oliveira, proprietária e administradora. A entrevistada autorizou a utilização de seu nome completo neste trabalho.
+- **Responsável pela organização:** Antonia Claudia Freitas da Silva Oliveira e Lucas Freitas de Oliveira , proprietária e administradora. A entrevistada autorizou a utilização de seu nome completo neste trabalho.
 #### Relato das Entrevistas
 - **Quem:** Antonia Claudia Freitas da Silva Oliveira, proprietária do estabelecimento.
 - **Quando:** 20/10/2026. 
