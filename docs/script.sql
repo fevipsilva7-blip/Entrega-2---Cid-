@@ -4355,7 +4355,7 @@ SELECT p.id_produto, p.nome_produto, c.nome_categoria,
        p.quantidade_estoque, p.estoque_minimo,
        p.estoque_minimo - p.quantidade_estoque AS unidades_para_repor
 FROM PRODUTO p JOIN CATEGORIA c ON c.id_categoria=p.id_categoria
-WHERE p.quantidade_estoque < p.estoque_minimo
+WHERE p.quantidade_estoque <= p.estoque_minimo
 ORDER BY unidades_para_repor DESC, p.nome_produto;
 
 -- G02 - Quanto a organizacao faturou por mes com pedidos concluidos?
@@ -4408,19 +4408,30 @@ FROM PAGAMENTO pg WHERE pg.status_pagamento='Pago'
 GROUP BY DATE_FORMAT(pg.data_hora, '%Y-%m'), pg.forma_pagamento
 ORDER BY mes, recebido DESC;
 
--- G08 - Quanto foi adquirido de fornecedores em cada mes?
+-- G08 - Quanto foi adquirido de cada fornecedor em cada mes?
 -- Atende: P5 (produtos e estoque) | KPI 8 (compras por fornecedor).
-SELECT DATE_FORMAT(c.data_compra,'%Y-%m') AS mes,
+SELECT DATE_FORMAT(c.data_compra, '%Y-%m') AS mes,
+       f.id_fornecedor,
+       f.nome_empresa,
        COUNT(DISTINCT c.id_compra) AS compras,
-       ROUND(SUM(ic.quantidade*ic.custo_unitario),2) AS valor_comprado
-FROM COMPRA c JOIN ITEM_COMPRA ic ON ic.id_compra=c.id_compra
-GROUP BY DATE_FORMAT(c.data_compra,'%Y-%m') ORDER BY mes;
+       ROUND(SUM(ic.quantidade * ic.custo_unitario), 2) AS valor_comprado
+FROM COMPRA c
+JOIN FORNECEDOR f ON f.id_fornecedor = c.id_fornecedor
+JOIN ITEM_COMPRA ic ON ic.id_compra = c.id_compra
+GROUP BY DATE_FORMAT(c.data_compra, '%Y-%m'),
+         f.id_fornecedor, f.nome_empresa
+ORDER BY mes, valor_comprado DESC;
 
--- G09 - Quais clientes estao cadastrados mas nao realizaram pedidos?
+-- G09 - Qual o percentual de clientes cadastrados sem pedido?
 -- Atende: indicador complementar de relacionamento com clientes | KPI 9.
-SELECT c.id_cliente, c.nome, c.telefone
-FROM CLIENTE c LEFT JOIN PEDIDO p ON p.id_cliente=c.id_cliente
-WHERE p.id_pedido IS NULL ORDER BY c.id_cliente;
+SELECT COUNT(*) AS clientes_sem_pedido,
+       (SELECT COUNT(*) FROM CLIENTE) AS total_clientes,
+       ROUND(100.0 * COUNT(*) / NULLIF((SELECT COUNT(*) FROM CLIENTE), 0), 2)
+         AS percentual_clientes_sem_pedido
+FROM CLIENTE c
+WHERE NOT EXISTS (
+    SELECT 1 FROM PEDIDO p WHERE p.id_cliente = c.id_cliente
+);
 
 -- G10 - Quais categorias de despesas geram maiores gastos por mes?
 -- Atende: P4 (informacoes financeiras) | KPI 10 (despesas por categoria).
@@ -4430,13 +4441,18 @@ FROM DESPESA
 GROUP BY DATE_FORMAT(data_despesa,'%Y-%m'), categoria
 ORDER BY mes, total_despesas DESC;
 
--- G11 - Qual a distribuicao de status das entregas por mes?
+-- G11 - Qual o percentual de entregas concluidas por mes?
 -- Atende: P1 (pedidos de delivery) | KPI 11 (situacao das entregas).
-SELECT DATE_FORMAT(p.data_hora,'%Y-%m') AS mes,
-       e.status_entrega, COUNT(*) AS total_entregas
-FROM ENTREGA e JOIN PEDIDO p ON p.id_pedido=e.id_pedido
-GROUP BY DATE_FORMAT(p.data_hora,'%Y-%m'), e.status_entrega
-ORDER BY mes, e.status_entrega;
+SELECT DATE_FORMAT(p.data_hora, '%Y-%m') AS mes,
+       COUNT(*) AS total_entregas,
+       SUM(CASE WHEN e.status_entrega = 'Entregue' THEN 1 ELSE 0 END)
+         AS entregas_concluidas,
+       ROUND(100.0 * SUM(CASE WHEN e.status_entrega = 'Entregue' THEN 1 ELSE 0 END)
+             / NULLIF(COUNT(*), 0), 2) AS percentual_entregas_concluidas
+FROM ENTREGA e
+JOIN PEDIDO p ON p.id_pedido = e.id_pedido
+GROUP BY DATE_FORMAT(p.data_hora, '%Y-%m')
+ORDER BY mes;
 
 -- G12 - Quantos pedidos concluidos cada funcionario atendeu?
 -- Atende: P1 (pedidos de delivery) | KPI 12 (pedidos por funcionario).
@@ -4448,7 +4464,7 @@ LEFT JOIN PEDIDO p ON p.id_funcionario=f.id_funcionario AND p.status='Concluido'
 GROUP BY f.id_funcionario, f.nome, f.cargo
 ORDER BY pedidos_concluidos DESC;
 
--- G13 - Quantos pedidos concluidos tiveram pagamento em mais de uma forma?
+-- G13 - Quantos pedidos concluidos tiveram mais de um pagamento?
 -- Atende: P4 (informacoes financeiras) | KPI 13 (pagamentos divididos).
 SELECT p.id_pedido, p.valor_total, COUNT(pg.id_pagamento) AS qtd_pagamentos,
        ROUND(SUM(pg.valor),2) AS total_pago
@@ -4483,40 +4499,60 @@ SELECT r.mes, ROUND(r.valor,2) AS faturamento,
 FROM receita r LEFT JOIN custo_compras cc ON cc.mes=r.mes
 LEFT JOIN desp d ON d.mes=r.mes ORDER BY r.mes;
 
+-- G15 - Quais sao os pedidos cancelados e seus dados financeiros?
+-- Atende: P2 (cancelamentos e reembolsos) | RF13.
+SELECT p.id_pedido, p.data_hora, p.status, p.motivo_cancelamento, p.valor_total,
+       GROUP_CONCAT(DISTINCT CONCAT(pr.nome_produto, ' x', ip.quantidade)
+                    ORDER BY pr.nome_produto SEPARATOR ', ')
+         AS produtos_quantidades,
+       COALESCE(GROUP_CONCAT(DISTINCT CONCAT(pg.forma_pagamento, ' - ', pg.status_pagamento,
+                           ' - R$ ', FORMAT(pg.valor, 2, 'pt_BR'))
+                    ORDER BY pg.id_pagamento SEPARATOR '; '),
+                'Sem pagamento registrado')
+         AS informacoes_pagamento
+FROM PEDIDO p
+LEFT JOIN ITEM_PEDIDO ip ON ip.id_pedido = p.id_pedido
+LEFT JOIN PRODUTO pr ON pr.id_produto = ip.id_produto
+LEFT JOIN PAGAMENTO pg ON pg.id_pedido = p.id_pedido
+WHERE p.status = 'Cancelado'
+GROUP BY p.id_pedido, p.data_hora, p.status, p.motivo_cancelamento, p.valor_total
+ORDER BY p.data_hora, p.id_pedido;
+
 -- ETAPA 9: CONSULTAS DE AUDITORIA
 -- Interpretacao: 0 linhas significa que a irregularidade nao foi encontrada.
 -- As regras RN01 a RN29 correspondem ao levantamento, ao dicionario
--- de dados e as validacoes tecnicas do modelo.
+-- de dados e as validacoes tecnicas do modelo; as auditorias A01 a A18
+-- verificam as regras de integridade que podem ser conferidas no banco.
 
 -- A01 - Existe motivo de cancelamento em pedido que NAO esta cancelado?
--- Verifica: RN01 (motivo_cancelamento so pode existir se Cancelado).
+-- Verifica: RN18 (motivo de cancelamento so pode existir em pedido cancelado).
 SELECT id_pedido, status, motivo_cancelamento FROM PEDIDO
 WHERE status <> 'Cancelado' AND motivo_cancelamento IS NOT NULL;
 
 -- A02 - Existe produto com estoque atual ou minimo negativo?
--- Verifica: RN02 (estoque nao negativo).
+-- Verifica: RN07 e RN08 (estoque nao negativo e estoque minimo).
 SELECT id_produto, nome_produto, quantidade_estoque, estoque_minimo FROM PRODUTO
 WHERE quantidade_estoque < 0 OR estoque_minimo < 0;
 
 -- A03 - Existe item de pedido com quantidade ou preco nao positivo?
--- Verifica: RN04 (preco_unitario positivo), mais quantidade positiva do dicionario.
+-- Verifica: RN29 (quantidades, precos e custos devem ser positivos).
 SELECT id_pedido, id_produto, quantidade, preco_unitario FROM ITEM_PEDIDO
 WHERE quantidade <= 0 OR preco_unitario <= 0;
 
 -- A04 - Existe identificador de pedido duplicado ou nao positivo?
--- Verifica: RN05 (identificador unico, sequencial por AUTO_INCREMENT).
+-- Verifica: RN03 (identificacao unica e automatica do pedido).
 -- Nota: AUTO_INCREMENT pode gerar lacunas, portanto elas NAO sao erro.
 SELECT id_pedido, COUNT(*) AS ocorrencias FROM PEDIDO
 GROUP BY id_pedido HAVING id_pedido <= 0 OR COUNT(*) > 1;
 
 -- A05 - Existe pedido sem nenhum item registrado?
--- Verifica: RN06 (todo pedido possui pelo menos um item).
+-- Verifica: RN23 (todo pedido deve possuir pelo menos um item).
 SELECT p.id_pedido, p.status FROM PEDIDO p
 LEFT JOIN ITEM_PEDIDO i ON i.id_pedido=p.id_pedido
 WHERE i.id_pedido IS NULL;
 
 -- A06 - Existe divergencia entre valor_total do pedido e soma de itens?
--- Verifica: RN07 (valor_total igual a itens sem taxa extra no DER).
+-- Verifica: RN24 (valor total igual a soma dos itens).
 SELECT p.id_pedido, p.valor_total,
        ROUND(COALESCE(SUM(i.quantidade*i.preco_unitario),0),2) AS valor_itens
 FROM PEDIDO p LEFT JOIN ITEM_PEDIDO i ON i.id_pedido=p.id_pedido
@@ -4524,7 +4560,7 @@ GROUP BY p.id_pedido, p.valor_total
 HAVING ABS(p.valor_total - valor_itens) > 0.01;
 
 -- A07 - Existe pedido concluido sem pagamento Pago conciliado integralmente?
--- Verifica: RN08 (total de pagamentos pagos = valor do pedido).
+-- Verifica: RN25 (pedido concluido deve estar quitado).
 SELECT p.id_pedido, p.valor_total,
        ROUND(COALESCE(SUM(CASE WHEN pg.status_pagamento='Pago' THEN pg.valor ELSE 0 END),0),2) AS total_pago
 FROM PEDIDO p LEFT JOIN PAGAMENTO pg ON pg.id_pedido=p.id_pedido
@@ -4533,18 +4569,18 @@ GROUP BY p.id_pedido, p.valor_total
 HAVING ABS(p.valor_total - total_pago) > 0.01;
 
 -- A08 - Existe pedido cancelado com pagamento ainda marcado como Pago?
--- Verifica: RN09 (pedido cancelado nao mantem pagamento Pago).
+-- Verifica: RN26 (pedido cancelado nao deve manter pagamento Pago).
 SELECT p.id_pedido, pg.id_pagamento, pg.status_pagamento
 FROM PEDIDO p JOIN PAGAMENTO pg ON pg.id_pedido=p.id_pedido
 WHERE p.status='Cancelado' AND pg.status_pagamento='Pago';
 
 -- A09 - Existe pedido de App/WhatsApp sem cliente cadastrado?
--- Verifica: RN10 (cliente obrigatorio fora do presencial).
+-- Verifica: RN01 (pedido de delivery deve possuir cliente).
 SELECT id_pedido, canal_atendimento FROM PEDIDO
 WHERE canal_atendimento IN ('WhatsApp','App') AND id_cliente IS NULL;
 
 -- A10 - Existe entrega para endereco pertencente a outro cliente?
--- Verifica: RN11 (endereco da entrega pertence ao cliente do pedido).
+-- Verifica: RN27 (endereco da entrega pertence ao cliente do pedido).
 SELECT e.id_entrega, p.id_pedido, p.id_cliente AS cliente_pedido,
        en.id_cliente AS cliente_endereco
 FROM ENTREGA e JOIN PEDIDO p ON p.id_pedido=e.id_pedido
@@ -4552,42 +4588,42 @@ JOIN ENDERECO en ON en.id_endereco=e.id_endereco
 WHERE p.id_cliente IS NULL OR p.id_cliente <> en.id_cliente;
 
 -- A11 - Existe entrega associada a pedido Presencial?
--- Verifica: RN12 (pedido presencial nao requer ENTREGA).
+-- Verifica: RN15 (pedido presencial nao deve possuir entrega).
 SELECT e.id_entrega, p.id_pedido FROM ENTREGA e
 JOIN PEDIDO p ON p.id_pedido=e.id_pedido
 WHERE p.canal_atendimento='Presencial';
 
 -- A12 - Existe data de entrega anterior a saida ou entrega sem saida?
--- Verifica: RN13 (ordem cronologica da entrega).
+-- Verifica: RN28 (datas de entrega devem ser coerentes).
 SELECT id_entrega, data_hora_saida, data_hora_entrega FROM ENTREGA
 WHERE data_hora_entrega IS NOT NULL AND
      (data_hora_saida IS NULL OR data_hora_entrega < data_hora_saida);
 
 -- A13 - Existe compra sem nenhum produto associado?
--- Verifica: RN14 (compras precisam de ITEM_COMPRA).
+-- Verifica: RN11 e RN23 (compra deve possuir itens relacionados).
 SELECT c.id_compra FROM COMPRA c
 LEFT JOIN ITEM_COMPRA ic ON ic.id_compra=c.id_compra
 WHERE ic.id_compra IS NULL;
 
 -- A14 - Existe pagamento com registro anterior ao pedido de origem?
--- Verifica: RN15 (pagamento nao anterior ao pedido).
+-- Verifica: RN28 (pagamento nao pode ser anterior ao pedido).
 SELECT pg.id_pagamento, pg.id_pedido, pg.data_hora, p.data_hora AS pedido_em
 FROM PAGAMENTO pg JOIN PEDIDO p ON p.id_pedido=pg.id_pedido
 WHERE pg.data_hora < p.data_hora;
 
 -- A15 - Existe entrega marcada como Entregue sem data efetiva?
--- Verifica: RN16 (status final exige data efetiva).
+-- Verifica: RN28 (entrega concluida deve possuir data efetiva).
 SELECT id_entrega, status_entrega FROM ENTREGA
 WHERE status_entrega='Entregue' AND data_hora_entrega IS NULL;
 
 -- A16 - Existe pagamento Estornado de pedido nao cancelado?
--- Verifica: RN17 (estorno de pedido cancelado).
+-- Verifica: RN26 (estorno so pode ocorrer em pedido cancelado).
 SELECT pg.id_pagamento, pg.id_pedido, p.status
 FROM PAGAMENTO pg JOIN PEDIDO p ON p.id_pedido=pg.id_pedido
 WHERE pg.status_pagamento='Estornado' AND p.status <> 'Cancelado';
 
 -- A17 - Existem itens de compra sem fornecedor/produto cadastrado?
--- Verifica: RN18 (integridade das referencias de compra).
+-- Verifica: RN10, RN11 e integridade referencial das compras.
 SELECT ic.id_compra, ic.id_produto FROM ITEM_COMPRA ic
 LEFT JOIN COMPRA c ON c.id_compra=ic.id_compra
 LEFT JOIN FORNECEDOR f ON f.id_fornecedor=c.id_fornecedor
@@ -4595,7 +4631,7 @@ LEFT JOIN PRODUTO pr ON pr.id_produto=ic.id_produto
 WHERE c.id_compra IS NULL OR f.id_fornecedor IS NULL OR pr.id_produto IS NULL;
 
 -- A18 - Existem produtos com preco de venda ou custo de compra invalidos?
--- Verifica: RN19 (preco e custo positivos).
+-- Verifica: RN29 (precos, custos e quantidades devem ser positivos).
 SELECT 'PRODUTO' AS origem, id_produto AS id_referencia FROM PRODUTO WHERE preco <= 0
 UNION ALL
 SELECT 'ITEM_COMPRA' AS origem, id_compra AS id_referencia FROM ITEM_COMPRA
