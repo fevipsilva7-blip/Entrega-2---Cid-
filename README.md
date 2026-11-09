@@ -478,6 +478,19 @@ A massa cobre as situações reais: 850 pedidos concluídos, 30 cancelados, 10 e
 | **Justificativa da escolha final** | O uso de `DECIMAL` evita problemas de arredondamento em cálculos financeiros no MySQL. |
 | **Reflexão crítica** | A IA acelera a escrita repetitiva, mas exige validação rigorosa sobre as restrições relacionais para não gerar inconsistências de chave estrangeira (`FK`) |
 
+### Claude (Anthropic)
+
+| Item | O que registrar |
+| :--- | :--- |
+| **Ferramenta e etapa** | Claude (Anthropic), usado na **revisão** do trabalho contra o esqueleto da Entrega 2 e na redação de trechos do relatório: regras de negócio `RN01` a `RN29`, seção 1.5 (justificativas técnicas), tabela de KPIs da seção 1.6, tabela de ajustes em relação à E1, explicação do volume da massa de dados (seção 4), regras `RN23` a `RN29` e a lista de consultas no `levantamento.md`, ajuste dos comentários `-- Verifica:` das auditorias no `docs/script.sql` e ajuste dos dados de evidência e do responsável na seção 1.1. Também foi usado para testar o script em uma cópia SQLite e para comentar os slides. |
+| **Motivação** | Conferir o trabalho contra os critérios do professor, alinhar os códigos `RN`, `G` e `A` entre README, levantamento e script, e obter uma estimativa de nota por item. |
+| **Prompt(s) utilizados** | *"analisa com base no que professor pediu e me dá notas de como está o meu trabalho agora"*; *"Os códigos RN não batem… a seção 1.5 não mudou… os KPIs ainda não têm fórmula, período e meta… a tabela de ajustes em relação à E1… faça essas mudanças pra mim"*; *"faça isso pra mim"* (foto da entrevista, link do Google Maps, responsável e vínculo). |
+| **Resposta recebida** | Lista de pendências por item do esqueleto, textos para as seções acima e arquivos revisados (`README.md`, `levantamento.md`, `script.sql`), que o grupo copiou para o repositório. Nenhuma consulta SQL foi alterada: só os comentários de cabeçalho das auditorias. |
+| **Fontes consultadas e verificadas** | O esqueleto e o enunciado do professor, o próprio repositório e o relatório de execução do script no MySQL 8.0.46 feito pelo grupo (`docs/relatorio_execucao_mysql_8.md`). Os números dos KPIs foram conferidos na massa de dados do script. |
+| **Trechos rejeitados ou corrigidos** | A IA leu uma versão antiga do repositório (guardada em cache) e deu uma análise desatualizada; afirmou que os slides não tinham o modelo lógico, o que era falso; errou uma soma de notas e duas porcentagens do KPI 6 (corrigidas). A coluna "Apontamento da correção da E1" foi escrita pela IA sem acesso à correção do professor e deve ser substituída pelo texto original. |
+| **Justificativa da escolha final** | O grupo manteve os códigos `RN01` a `RN22` do levantamento feito com a proprietária e só acrescentou `RN23` a `RN29` para as validações já existentes no script, em vez de reescrever as regras. As metas dos KPIs são propostas do grupo, a validar com a proprietária. |
+| **Reflexão crítica** | A IA acelera a revisão e a padronização de códigos, mas erra quando trabalha com versão desatualizada ou sem acesso ao material do professor. Por isso o grupo conferiu as afirmações no repositório e executou o script no MySQL. A estimativa de nota da IA é apenas orientativa. |
+
 ---
 
 ## 7. Apresentação Corporativa Final
