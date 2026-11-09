@@ -164,7 +164,7 @@ O modelo lógico foi obtido do DER conceitual aplicando as regras de conversão 
 
 1. **Entidades → Tabelas:** Cada entidade do modelo conceitual (`CLIENTE`, `ENDERECO`, `PRODUTO`, `CATEGORIA`, `PEDIDO`, `PAGAMENTO`, `ENTREGA`, `FORNECEDOR`, `COMPRA`, `DESPESA` e `FUNCIONARIO`) foi convertida em uma tabela relacional, com uma chave primária inteira própria (`id_<entidade>`).
 2. **Atributos → Colunas:** Cada atributo virou uma coluna com tipo SQL, conforme o modelo lógico e o script. Os campos monetários usam `DECIMAL(10,2)`. O brModelo não oferece esse tipo e mostra `FLOAT` no diagrama, por isso o dicionário de dados e o script SQL são a referência dos tipos.
-3. **Atributo composto e multivalorado → Tabela própria:** O endereço do cliente (rua, número, bairro, CEP e complemento) é composto, e um cliente pode ter mais de um endereço de entrega. Por isso ele virou a tabela `ENDERECO`, com FK para `CLIENTE`. `A entidade `ENDERECO` está representada no DER conceitual e foi convertida para a tabela `ENDERECO`.`
+3. **Atributo composto e multivalorado → Tabela própria:** O endereço do cliente (rua, número, bairro, CEP e complemento) é composto, e um cliente pode ter mais de um endereço de entrega. Por isso ele virou a tabela `ENDERECO`, com FK para `CLIENTE`. A entidade `ENDERECO` está representada no DER conceitual e foi convertida para a tabela `ENDERECO`.
 4. **Relacionamentos N:N → Tabelas associativas:** Dois relacionamentos N:N foram convertidos em tabelas associativas, cada uma com os atributos próprios da relação:
    - `PEDIDO` N:N `PRODUTO` → `ITEM_PEDIDO` (`quantidade` e `preco_unitario`, o preço praticado na venda).
    - `COMPRA` N:N `PRODUTO` → `ITEM_COMPRA` (`quantidade` e `custo_unitario`, o custo pago na compra).
@@ -187,7 +187,7 @@ A coluna `ENTREGA.id_pedido` possui `UNIQUE`, garantindo no máximo uma entrega 
 
 #### Chaves primárias
 
-Todas as tabelas que representam uma entidade usam uma PK **substituta**, do tipo `INT AUTO_INCREMENT`. Nenhum atributo do negócio serve bem como chave: nomes se repetem, telefones mudam e descrições podem ser editadas. Um inteiro curto e sem significado próprio nunca precisa ser alterado, ocupa pouco espaço nas FKs e agiliza os `JOIN`s. No caso de `PEDIDO`, o `AUTO_INCREMENT` também gera a numeração única e sequencial exigida pela `RN05`.
+Todas as tabelas que representam uma entidade usam uma PK **substituta**, do tipo `INT AUTO_INCREMENT`. Nenhum atributo do negócio serve bem como chave: nomes se repetem, telefones mudam e descrições podem ser editadas. Um inteiro curto e sem significado próprio nunca precisa ser alterado, ocupa pouco espaço nas FKs e agiliza os `JOIN`s. No caso de `PEDIDO`, o `AUTO_INCREMENT` também gera a numeração única e sequencial exigida pela `RN03`.
 
 As tabelas associativas usam **PK composta**, formada pelas duas FKs. Isso identifica cada linha pelo par (pedido, produto) ou (compra, produto) e impede que o mesmo produto apareça duas vezes no mesmo pedido ou na mesma compra; se o cliente pede mais unidades, aumenta-se a `quantidade`. Não é necessário criar uma chave artificial para essas tabelas.
 
@@ -213,10 +213,10 @@ As tabelas associativas usam **PK composta**, formada pelas duas FKs. Isso ident
 
 As chaves estrangeiras representam os relacionamentos do modelo e garantem a **integridade referencial**: o banco recusa um pedido de cliente inexistente, um item de produto removido ou uma entrega sem endereço. Algumas decisões merecem destaque:
 
-- **`PEDIDO.id_cliente` é opcional.** A `RN01` exige dados do cliente apenas para pedidos com entrega; pedidos presenciais podem ser registrados sem cliente. A coluna `PEDIDO.id_cliente aceita `NULL`, pois pedidos presenciais podem ser registrados sem cliente.
+- **`PEDIDO.id_cliente` é opcional.** A `RN01` exige dados do cliente apenas para pedidos com entrega; pedidos presenciais podem ser registrados sem cliente. A coluna `PEDIDO.id_cliente` aceita `NULL`, pois pedidos presenciais podem ser registrados sem cliente.
 - **`ENTREGA.id_endereco` é obrigatória.** Uma entrega sem endereço de destino não pode ser realizada (`RN01`).
 - **`PAGAMENTO.id_pedido` aponta para o pedido, e não o contrário.** Assim um mesmo pedido pode ter vários pagamentos, o que atende o KPI 14.
-- **As FKs não usam exclusão em cascata.** Pedidos cancelados e seus registros financeiros devem ser preservados (`RN17`), então não se apaga um registro que ainda é referenciado. `As FKs não utilizam exclusão em cascata, preservando o histórico de pedidos e pagamentos.
+- **As FKs não usam exclusão em cascata.** Pedidos cancelados e seus registros financeiros devem ser preservados (`RN17`), então não se apaga um registro que ainda é referenciado. As FKs não utilizam exclusão em cascata, preservando o histórico de pedidos e pagamentos.
 
 ---
 
@@ -481,5 +481,4 @@ A massa cobre as situações reais: 850 pedidos concluídos, 30 cancelados, 10 e
 ## 7. Apresentação Corporativa Final
 
 [Acessar Slides](./docs/slideapresentacao.pdf)
-
 
