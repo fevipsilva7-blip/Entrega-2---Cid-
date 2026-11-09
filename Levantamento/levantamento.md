@@ -384,7 +384,7 @@ Esses processos podem existir na organização ou ser executados por sistemas ex
 | G10 | Despesas por categoria e mês | P4, KPI 10 |
 | G11 | Percentual de entregas concluídas por mês | P1, KPI 11 |
 | G12 | Pedidos concluídos por funcionário | P1, KPI 12 |
-| G13 | Pedidos com mais de um pagamento | P4, KPI 13 |
+| G13 | Identificação de pedidos com mais de um pagamento Pago | P4, KPI 13 |
 | G14 | Saldo demonstrativo mensal | P4, KPI 14 |
 | G15 | Pedidos cancelados com itens e informações financeiras | P2, RF13 |
 
