@@ -132,7 +132,8 @@ Os códigos abaixo são os mesmos do levantamento (`Levantamento/levantamento.md
 
 #### Notação do DER Conceitual
 - **Ferramenta utilizada:** brModelo.
-- **Link/Imagem do DER:** ![DER Conceitual](./DER%20conceitual/der_conceitual.png)
+- **Link/Imagem do DER:** ![DER Conceitual](./DER%20conceitual/der-conceitual.png)
+
 
 #### Ajustes do Modelo em Relação à Entrega 1
 
@@ -397,6 +398,7 @@ As consultas `G01` a `G14` já retornam dados agregados por mês, canal, forma d
 
 - **Ferramenta utilizada:** brModelo (modelo lógico).
 - **Imagem do modelo lógico:** ![DER Lógico](./DER%20logico/der_logico.png)
+
 - **Observação sobre tipos:** O brModelo não oferece os tipos `DECIMAL` nem tamanhos para `VARCHAR`. Por isso, o diagrama pode apresentar `FLOAT` nos campos monetários; no dicionário de dados e no script SQL, os campos financeiros devem utilizar `DECIMAL(10,2)`.
 
 ---
@@ -444,7 +446,8 @@ A massa cobre as situações reais: 850 pedidos concluídos, 30 cancelados, 10 e
 ---
 
 ## 5. Repositório GitHub e Dicionário de Dados
-- **Dicionário de Dados:** [Acessar pasta do Dicionário de Dados](./Dicionario%20de%20dados/)
+- **Dicionário de Dados:** [Acessar dicionário de dados](./Dicionario%20de%20dados/dicionario-de-dados.html)
+
 
 ---
 
@@ -464,5 +467,7 @@ A massa cobre as situações reais: 850 pedidos concluídos, 30 cancelados, 10 e
 ---
 
 ## 7. Apresentação Corporativa Final
-[Acessar Slides](./docs/apresentacao.pdf)
+
+[Acessar Slides](./docs/slideapresentacao.pdf)
+
 
