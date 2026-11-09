@@ -180,7 +180,7 @@ O restaurante precisa identificar produtos próximos de acabar, acompanhar o est
 | RF09 | O sistema deve cadastrar fornecedores e registrar compras realizadas. |
 | RF10 | O sistema deve registrar os produtos, as quantidades e os custos unitários de cada compra por meio de `ITEM_COMPRA`. |
 | RF11 | O sistema deve registrar despesas com descrição, categoria, data, valor e funcionário responsável. |
-| RF12 | O sistema deve permitir consultar produtos cuja quantidade esteja abaixo do estoque mínimo. |
+| RF12 | O sistema deve permitir consultar produtos cuja quantidade esteja abaixo ou igual ao estoque mínimo. |
 | RF13 | O sistema deve manter pedidos cancelados com situação, motivo, itens e informações financeiras relacionadas. |
 | RF14 | O sistema deve permitir consultar vendas, pagamentos, despesas, cancelamentos e vendas por canal. |
 | RF15 | O sistema deve permitir consultar produtos mais vendidos e pagamentos pendentes. |
