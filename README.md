@@ -491,7 +491,7 @@ A massa cobre as situações reais: 850 pedidos concluídos, 30 cancelados, 10 e
 | **Justificativa da escolha final** | O grupo manteve os códigos `RN01` a `RN22` do levantamento feito com a proprietária e só acrescentou `RN23` a `RN29` para as validações já existentes no script, em vez de reescrever as regras. As metas dos KPIs são propostas do grupo, a validar com a proprietária. |
 | **Reflexão crítica** | A IA acelera a revisão e a padronização de códigos, mas erra quando trabalha com versão desatualizada ou sem acesso ao material do professor. Por isso o grupo conferiu as afirmações no repositório e executou o script no MySQL. A estimativa de nota da IA é apenas orientativa. |
 
-
+(Manus)
 | Item | O que registrar |
 | :--- | :--- |
 | **Ferramenta e etapa** | Manus, assistente de Inteligência Artificial utilizado nas etapas de revisão do levantamento, conferência da consistência entre README, requisitos e regras de negócio, auxílio na escrita e revisão das consultas SQL, validação do script e organização da documentação. |
