@@ -4381,17 +4381,25 @@ SELECT DATE_FORMAT(data_hora, '%Y-%m') AS mes, COUNT(*) AS pedidos_total,
              / NULLIF(COUNT(*),0), 2) AS percentual_cancelamento
 FROM PEDIDO GROUP BY DATE_FORMAT(data_hora, '%Y-%m') ORDER BY mes;
 
--- G05 - Quais os dez produtos mais vendidos em quantidade e faturamento?
--- Atende: P5 (produtos e estoque) | KPI 5 (produtos mais vendidos).
+-- G05 - Quais os dez produtos mais vendidos e qual a situacao do estoque?
+-- Atende: P5 (produtos e estoque) | KPI 5 (vendas e situacao do estoque).
 SELECT pr.id_produto, pr.nome_produto,
        SUM(ip.quantidade) AS unidades_vendidas,
-       ROUND(SUM(ip.quantidade * ip.preco_unitario),2) AS faturamento_itens
+       ROUND(SUM(ip.quantidade * ip.preco_unitario), 2) AS faturamento_itens,
+       pr.quantidade_estoque,
+       pr.estoque_minimo,
+       CASE
+           WHEN pr.quantidade_estoque <= pr.estoque_minimo THEN 'Abaixo ou no minimo'
+           ELSE 'Acima do minimo'
+       END AS situacao_estoque
 FROM ITEM_PEDIDO ip
-JOIN PEDIDO p ON p.id_pedido=ip.id_pedido
-JOIN PRODUTO pr ON pr.id_produto=ip.id_produto
-WHERE p.status='Concluido'
-GROUP BY pr.id_produto, pr.nome_produto
-ORDER BY unidades_vendidas DESC, faturamento_itens DESC LIMIT 10;
+JOIN PEDIDO p ON p.id_pedido = ip.id_pedido
+JOIN PRODUTO pr ON pr.id_produto = ip.id_produto
+WHERE p.status = 'Concluido'
+GROUP BY pr.id_produto, pr.nome_produto,
+         pr.quantidade_estoque, pr.estoque_minimo
+ORDER BY unidades_vendidas DESC, faturamento_itens DESC
+LIMIT 10;
 
 -- G06 - Qual canal de atendimento recebe mais pedidos e gera mais receita?
 -- Atende: P3 (comparacao entre canais) | KPI 6 (vendas por canal).
@@ -4408,19 +4416,46 @@ FROM PAGAMENTO pg WHERE pg.status_pagamento='Pago'
 GROUP BY DATE_FORMAT(pg.data_hora, '%Y-%m'), pg.forma_pagamento
 ORDER BY mes, recebido DESC;
 
--- G08 - Quanto foi adquirido de cada fornecedor em cada mes?
+-- G08 - Quanto foi adquirido de cada fornecedor e qual a proporcao sobre o faturamento?
 -- Atende: P5 (produtos e estoque) | KPI 8 (compras por fornecedor).
-SELECT DATE_FORMAT(c.data_compra, '%Y-%m') AS mes,
-       f.id_fornecedor,
-       f.nome_empresa,
-       COUNT(DISTINCT c.id_compra) AS compras,
-       ROUND(SUM(ic.quantidade * ic.custo_unitario), 2) AS valor_comprado
-FROM COMPRA c
-JOIN FORNECEDOR f ON f.id_fornecedor = c.id_fornecedor
-JOIN ITEM_COMPRA ic ON ic.id_compra = c.id_compra
-GROUP BY DATE_FORMAT(c.data_compra, '%Y-%m'),
-         f.id_fornecedor, f.nome_empresa
-ORDER BY mes, valor_comprado DESC;
+WITH compras_fornecedor AS (
+    SELECT DATE_FORMAT(c.data_compra, '%Y-%m') AS mes,
+           f.id_fornecedor,
+           f.nome_empresa,
+           COUNT(DISTINCT c.id_compra) AS compras,
+           ROUND(SUM(ic.quantidade * ic.custo_unitario), 2) AS valor_comprado
+    FROM COMPRA c
+    JOIN FORNECEDOR f ON f.id_fornecedor = c.id_fornecedor
+    JOIN ITEM_COMPRA ic ON ic.id_compra = c.id_compra
+    GROUP BY DATE_FORMAT(c.data_compra, '%Y-%m'),
+             f.id_fornecedor, f.nome_empresa
+), compras_mes AS (
+    SELECT mes, SUM(valor_comprado) AS total_compras_mes
+    FROM compras_fornecedor
+    GROUP BY mes
+), faturamento_mes AS (
+    SELECT DATE_FORMAT(data_hora, '%Y-%m') AS mes,
+           SUM(valor_total) AS faturamento_mes
+    FROM PEDIDO
+    WHERE status = 'Concluido'
+    GROUP BY DATE_FORMAT(data_hora, '%Y-%m')
+)
+SELECT cf.mes, cf.id_fornecedor, cf.nome_empresa, cf.compras,
+       cf.valor_comprado,
+       ROUND(fm.faturamento_mes, 2) AS faturamento_mes,
+       ROUND(100.0 * cf.valor_comprado / NULLIF(fm.faturamento_mes, 0), 2)
+           AS percentual_fornecedor_sobre_faturamento,
+       ROUND(100.0 * cm.total_compras_mes / NULLIF(fm.faturamento_mes, 0), 2)
+           AS percentual_compras_sobre_faturamento,
+       CASE
+           WHEN 100.0 * cm.total_compras_mes / NULLIF(fm.faturamento_mes, 0) <= 30
+           THEN 'Dentro da meta'
+           ELSE 'Acima da meta'
+       END AS situacao_meta_30_porcento
+FROM compras_fornecedor cf
+JOIN compras_mes cm ON cm.mes = cf.mes
+LEFT JOIN faturamento_mes fm ON fm.mes = cf.mes
+ORDER BY cf.mes, cf.valor_comprado DESC;
 
 -- G09 - Qual o percentual de clientes cadastrados sem pedido?
 -- Atende: indicador complementar de relacionamento com clientes | KPI 9.
