@@ -372,14 +372,14 @@ Esses processos podem existir na organização ou ser executados por sistemas ex
 
 | Código | Consulta | Problema ou KPI |
 |---|---|---|
-| G01 | Produtos abaixo do estoque mínimo | P5, KPI 1 |
+| G01 | Produtos abaixo ou iguais ao estoque mínimo | P5, KPI 1 |
 | G02 | Faturamento mensal | P4, KPI 2 |
 | G03 | Pedidos concluídos e ticket médio mensal | P4, KPI 3 |
 | G04 | Taxa de cancelamento por mês | P2, KPI 4 |
-| G05 | Dez produtos mais vendidos | P5, KPI 5 |
+| G05 | Dez produtos mais vendidos com situação do estoque | P5, KPI 5 |
 | G06 | Pedidos e receita por canal de atendimento | P3, KPI 6 |
 | G07 | Recebimentos por forma de pagamento | P4, KPI 7 |
-| G08 | Compras por fornecedor e mês | P5, KPI 8 |
+| G08 | Compras por fornecedor, faturamento e percentual mensal | P5, KPI 8 |
 | G09 | Percentual de clientes sem pedido | KPI 9 |
 | G10 | Despesas por categoria e mês | P4, KPI 10 |
 | G11 | Percentual de entregas concluídas por mês | P1, KPI 11 |
